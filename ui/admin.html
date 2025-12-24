@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥳</text></svg>">
+    <title>Party Admin - NYE 2025</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Login Form */
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px 25px;
+            margin: 60px auto;
+            max-width: 360px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-form button:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            background: #ff6b6b;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+            text-shadow: 0 0 30px rgba(254, 202, 87, 0.3);
+            text-align: center;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        /* Footer buttons */
+        .admin-footer {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 20px 0;
+        }
+
+        .footer-btn {
+            flex: 1;
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .footer-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .footer-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Controls Section - Mobile Optimized */
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .controls h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        .control-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .mute-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.35);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mute-toggle:hover {
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .mute-toggle .mute-x {
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+
+        .mute-toggle.unmuted {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .mute-toggle.unmuted .mute-x {
+            opacity: 0;
+        }
+
+        .control-btn {
+            padding: 0;
+            border: none;
+            border-radius: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+            touch-action: manipulation;
+        }
+
+        .control-btn:active {
+            transform: scale(0.92);
+        }
+
+        .control-btn.clicked {
+            animation: buttonPop 0.3s ease;
+        }
+
+        @keyframes buttonPop {
+            0% { transform: scale(1); }
+            30% { transform: scale(0.88); }
+            60% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .control-btn.pause,
+        .control-btn.resume,
+        .control-btn.prev,
+        .control-btn.next {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .control-btn.resume {
+            border-color: rgba(29, 209, 161, 0.4);
+        }
+
+        .control-btn.pause {
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .control-btn .icon {
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .control-btn .label {
+            font-size: 12px;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Now Playing Status */
+        .now-playing {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .now-playing.waiting {
+            background: rgba(80, 80, 80, 0.4);
+        }
+
+        .now-playing-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .now-playing-label .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .now-playing-label .status-dot.playing {
+            background: #1dd1a1;
+            box-shadow: 0 0 8px #1dd1a1;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .now-playing-label .status-dot.paused {
+            background: #ff6b6b;
+            box-shadow: 0 0 8px #ff6b6b;
+        }
+
+        .now-playing-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+            word-break: break-word;
+            min-height: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .now-playing-title .spinner {
+            width: 20px;
+            height: 20px;
+            border-width: 2px;
+        }
+
+        .now-playing-meta {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-dot.playing {
+            background: #1dd1a1;
+        }
+
+        .status-dot.paused {
+            background: #ff6b6b;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Countdown timer */
+        .countdown-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .countdown-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            max-width: 200px;
+        }
+
+        .countdown-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1dd1a1, #feca57);
+            border-radius: 3px;
+            transition: width 0.2s linear;
+        }
+
+        .countdown-bar-fill.paused {
+            background: #ff6b6b;
+        }
+
+        .countdown-time {
+            font-size: 14px;
+            font-weight: bold;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        /* Submissions Section */
+        .submissions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .submissions h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px 8px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .tab[data-status="pending"] {
+            border-color: rgba(254, 202, 87, 0.6);
+        }
+
+        .tab[data-status="approved"] {
+            border-color: rgba(29, 209, 161, 0.6);
+        }
+
+        .tab[data-status="rejected"] {
+            border-color: rgba(255, 107, 107, 0.6);
+        }
+
+        .tab.active {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .tab .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 4px;
+            font-size: 11px;
+        }
+
+        .submission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 60vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 8px;
+        }
+
+        .submission-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .submission-content {
+            margin-bottom: 8px;
+        }
+
+        .submission-content h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .submission-content p {
+            font-size: 14px;
+            line-height: 1.3;
+        }
+
+        .submission-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+        }
+
+        .action-btn.approve {
+            background: linear-gradient(135deg, #1dd1a1, #10ac84);
+            color: white;
+        }
+
+        .action-btn.reject {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.5;
+        }
+
+        /* Loading spinner */
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #feca57;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Control loading overlay */
+        .controls-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .controls-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .controls-overlay .spinner {
+            width: 36px;
+            height: 36px;
+            border-width: 4px;
+        }
+
+        .controls {
+            position: relative;
+        }
+
+        /* Slide List Modal */
+        .slide-list-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .slide-list-modal.active {
+            display: flex;
+        }
+
+        .slide-list-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .slide-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .slide-list-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .close-modal-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .slide-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slide-list-item {
+            position: relative;
+            padding: 12px 15px;
+            padding-bottom: 18px;  /* Extra space for hidden indicator */
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.15s;
+        }
+
+        .slide-list-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .slide-list-item.current {
+            background: rgba(29, 209, 161, 0.3);
+            border-left: 3px solid #1dd1a1;
+        }
+
+        .slide-list-item .slide-num {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .slide-list-item .slide-name {
+            flex: 1;
+        }
+
+        .slide-list-item.resolution {
+            border-left: 3px solid #FFC107;
+            background: rgba(255, 193, 7, 0.15);
+        }
+
+        .slide-list-item.resolution .slide-num {
+            background: rgba(255, 193, 7, 0.3);
+            color: #FFC107;
+        }
+
+        .slide-list-item.memory {
+            border-left: 3px solid #E91E63;
+            background: rgba(233, 30, 99, 0.15);
+        }
+
+        .slide-list-item.memory .slide-num {
+            background: rgba(233, 30, 99, 0.3);
+            color: #E91E63;
+        }
+
+        .slide-list-item .slide-type {
+            font-size: 10px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            margin-left: 8px;
+        }
+
+        .slide-list-item.hidden {
+            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .slide-list-item.hidden .slide-name {
+            text-decoration: line-through;
+            text-decoration-color: rgba(255, 107, 107, 0.6);
+        }
+
+        .slide-list-item.hidden .slide-num {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .slide-list-item .hidden-indicator {
+            display: none;
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.35);
+            letter-spacing: 0.5px;
+        }
+
+        .slide-list-item.hidden .hidden-indicator {
+            display: block;
+        }
+
+        .hide-btn {
+            padding: 6px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .hide-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Now Playing corner buttons */
+        .now-playing {
+            position: relative;
+        }
+
+        .now-playing-corner-btn {
+            position: absolute;
+            top: 10px;
+            padding: 6px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .now-playing-corner-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .now-playing-corner-btn.left {
+            left: 10px;
+        }
+
+        .now-playing-corner-btn.right {
+            right: 10px;
+            display: none;
+        }
+
+        .now-playing-corner-btn.right.visible {
+            display: flex;
+        }
+
+        /* Desktop adjustments */
+        @media (min-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .control-btn {
+                min-height: 100px;
+            }
+
+            .control-btn .icon {
+                font-size: 40px;
+            }
+
+            .now-playing-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Context Menu Styles */
+        .context-menu {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 0;
+            min-width: 180px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 200;
+            display: none;
+            overflow: hidden;
+        }
+
+        .context-menu.active {
+            display: block;
+            animation: menuSlideIn 0.15s ease-out;
+        }
+
+        @keyframes menuSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .context-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        .context-menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .context-menu-item:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .context-menu-item .icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+
+        .context-menu-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+        }
+
+        /* Confirmation Modal Styles */
+        .confirm-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .confirm-modal.active {
+            display: flex;
+        }
+
+        .confirm-modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: modalSlideIn 0.2s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .confirm-modal-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .confirm-modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .confirm-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .confirm-modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .confirm-modal-btn:active {
+            transform: scale(0.97);
+        }
+
+        .confirm-modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .confirm-modal-btn.confirm {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: white;
+        }
+
+        .confirm-modal-btn.confirm.warning {
+            background: linear-gradient(135deg, #feca57, #f9a825);
+            color: #1a1a2e;
+        }
+
+        /* Submission card click feedback */
+        .submission-card {
+            cursor: pointer;
+            transition: transform 0.1s, background 0.15s;
+        }
+
+        .submission-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Expandable card actions */
+        .card-expand-actions {
+            display: flex;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.25s ease;
+            margin-top: 0;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+        }
+
+        .submission-card.expanded .card-expand-actions {
+            max-height: 50px;
+            opacity: 1;
+            margin-top: 10px;
+        }
+
+        .card-expand-btn {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .card-expand-btn:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+
+        .card-expand-btn:last-child {
+            border-radius: 0 8px 8px 0;
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .card-expand-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .card-expand-btn:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-expand-btn .icon {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginForm" class="login-form">
+            <h2>Admin Login</h2>
+            <div id="loginError" class="error" style="display: none;"></div>
+            <input type="password" id="password" placeholder="Enter password" autofocus>
+            <button onclick="login()">Login</button>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="admin-panel">
+            <div class="header">
+                <h1>PARTY ADMIN</h1>
+            </div>
+
+            <!-- Slideshow Controls -->
+            <div class="controls">
+                <div class="controls-overlay" id="controlsOverlay">
+                    <div class="spinner"></div>
+                </div>
+                <h2>Remote Control</h2>
+                <div class="control-buttons">
+                    <button class="control-btn prev" onclick="controlSlideshow('prev', this)">
+                        <span class="icon">&larr;</span>
+                        <span class="label">Prev</span>
+                    </button>
+                    <button id="pauseResumeBtn" class="control-btn pause" onclick="togglePause(this)">
+                        <span class="icon" id="pauseIcon">| |</span>
+                        <span class="label" id="pauseText">Pause</span>
+                    </button>
+                    <button class="control-btn next" onclick="controlSlideshow('next', this)">
+                        <span class="icon">&rarr;</span>
+                        <span class="label">Next</span>
+                    </button>
+                </div>
+                <button id="muteBtn" class="mute-toggle" onclick="toggleMute(this)" title="Toggle sound">
+                    <svg id="muteIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <line class="mute-x" x1="23" y1="9" x2="17" y2="15"></line>
+                        <line class="mute-x" x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
+                </button>
+
+                <div class="now-playing" id="nowPlaying">
+                    <button class="now-playing-corner-btn left" onclick="openSlideList()">
+                        <span>&#9776;</span>
+                        <span>Slides</span>
+                    </button>
+                    <button id="nextVideoBtn" class="now-playing-corner-btn right" onclick="switchVideo()" title="Try next video">
+                        <span style="letter-spacing:-3px;">&#9654;&#9654;</span>
+                    </button>
+                    <div class="now-playing-label">
+                        <span class="status-dot playing" id="statusDot"></span>
+                        <span id="statusText">Now Playing</span>
+                    </div>
+                    <div class="now-playing-title" id="slideTitle"><div class="spinner"></div></div>
+                    <div class="now-playing-meta">
+                        <span id="slideIndex">Slide -/-</span>
+                    </div>
+                    <div class="countdown-display">
+                        <div class="countdown-bar">
+                            <div class="countdown-bar-fill" id="countdownFill" style="width: 100%"></div>
+                        </div>
+                        <span class="countdown-time" id="countdownTime">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guest Submissions -->
+            <div class="submissions">
+                <h2>Guest Submissions</h2>
+                <div class="tabs">
+                    <button class="tab active" data-status="pending" onclick="switchTab('pending')">
+                        Pending <span class="count" id="pendingCount">0</span>
+                    </button>
+                    <button class="tab" data-status="approved" onclick="switchTab('approved')">
+                        Approved <span class="count" id="approvedCount">0</span>
+                    </button>
+                    <button class="tab" data-status="rejected" onclick="switchTab('rejected')">
+                        Rejected <span class="count" id="rejectedCount">0</span>
+                    </button>
+                </div>
+                <div id="submissionList" class="submission-list">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="admin-footer">
+                <button class="footer-btn" onclick="window.location.href='/guest'">Guest Page</button>
+                <button class="footer-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Slide List Modal -->
+        <div id="slideListModal" class="slide-list-modal" onclick="closeSlideListIfOutside(event)">
+            <div class="slide-list-content" onclick="event.stopPropagation()">
+                <div class="slide-list-header">
+                    <h3>All Slides</h3>
+                    <button class="close-modal-btn" onclick="closeSlideList()">Close</button>
+                </div>
+                <div id="slideListItems" class="slide-list-items">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Menu (dynamically positioned) -->
+        <div id="contextMenu" class="context-menu">
+            <!-- Items populated dynamically based on submission status -->
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmModal" class="confirm-modal" onclick="closeConfirmModalIfOutside(event)">
+            <div class="confirm-modal-content" onclick="event.stopPropagation()">
+                <div class="confirm-modal-icon" id="confirmIcon">⚠️</div>
+                <div class="confirm-modal-title" id="confirmTitle">Confirm Action</div>
+                <div class="confirm-modal-buttons">
+                    <button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Cancel</button>
+                    <button class="confirm-modal-btn confirm" id="confirmBtn" onclick="executeConfirmedAction()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('adminToken');
+        let currentTab = 'pending';
+        let isPaused = false;
+        let currentSlideIndex = 0;
+        let totalSlides = 0;
+        let hiddenSlides = [];  // Array of hidden slide IDs
+        let pollInterval = null;
+        let submissionsInterval = null;
+        let countdownInterval = null;
+        let isControlBusy = false;
+        let controlTimeout = null;
+        let hasConnected = false;
+
+        // Countdown timer state
+        let slideStartedAt = null;
+        let slideDuration = 30000;
+
+        // App config (loaded from server)
+        let appConfig = {
+            polling: {
+                admin_state: 2000,
+                admin_submissions: 5000
+            }
+        };
+
+        async function loadAppConfig() {
+            try {
+                const res = await fetch('/api/config');
+                if (res.ok) {
+                    appConfig = await res.json();
+                    console.log('[Config] Loaded:', appConfig);
+                }
+            } catch (e) {
+                console.warn('[Config] Failed to load, using defaults');
+            }
+        }
+
+        // Show/hide loading overlay for controls
+        function setControlsLoading(loading) {
+            const overlay = document.getElementById('controlsOverlay');
+            if (loading) {
+                overlay.classList.add('active');
+                isControlBusy = true;
+                // Auto-clear loading after 5 seconds to prevent stuck state
+                if (controlTimeout) clearTimeout(controlTimeout);
+                controlTimeout = setTimeout(() => {
+                    setControlsLoading(false);
+                }, 5000);
+            } else {
+                overlay.classList.remove('active');
+                isControlBusy = false;
+                if (controlTimeout) {
+                    clearTimeout(controlTimeout);
+                    controlTimeout = null;
+                }
+            }
+        }
+
+        // Animate button click
+        function animateButton(btn) {
+            btn.classList.remove('clicked');
+            void btn.offsetWidth; // Force reflow to restart animation
+            btn.classList.add('clicked');
+        }
+
+        // Wrapper for control actions with loading state
+        async function withControlLoading(btn, asyncFn) {
+            if (isControlBusy) return;
+            animateButton(btn);
+            setControlsLoading(true);
+            try {
+                await asyncFn();
+            } catch (e) {
+                console.error('Control action failed:', e);
+            } finally {
+                setControlsLoading(false);
+            }
+        }
+
+        // Update countdown timer display
+        function updateCountdown() {
+            const fillEl = document.getElementById('countdownFill');
+            const timeEl = document.getElementById('countdownTime');
+
+            if (!slideStartedAt || !slideDuration || isPaused) {
+                if (isPaused) {
+                    fillEl.classList.add('paused');
+                    timeEl.textContent = 'II';
+                }
+                return;
+            }
+
+            fillEl.classList.remove('paused');
+            const now = Date.now();
+            const started = new Date(slideStartedAt).getTime();
+            const elapsed = now - started;
+            const remaining = Math.max(0, slideDuration - elapsed);
+            const progress = Math.max(0, Math.min(100, (remaining / slideDuration) * 100));
+
+            fillEl.style.width = progress + '%';
+            timeEl.textContent = Math.ceil(remaining / 1000) + 's';
+        }
+
+        function startCountdownTimer() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(updateCountdown, 200);
+        }
+
+        // Check if already logged in
+        if (token) {
+            verifyToken();
+        }
+
+        async function verifyToken() {
+            try {
+                const res = await fetch('/api/admin/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showAdminPanel();
+                } else {
+                    localStorage.removeItem('adminToken');
+                    token = null;
+                }
+            } catch (e) {
+                console.error('Verify failed:', e);
+            }
+        }
+
+        // Funny error messages for failed login attempts
+        const funnyErrors = [
+            "Nice try, hacker! 🕵️",
+            "That's not it, chief.",
+            "Wrong password. Did you try 'password123'? (Don't, that's not it either)",
+            "Access denied. The DJ booth is VIP only.",
+            "Nope! Maybe try asking nicely?",
+            "Error 401: Your password is bad and you should feel bad.",
+            "Incorrect. The password is definitely not 'letmein'.",
+            "🚫 Denied! This party has standards.",
+            "Wrong! Hint: It's not 'admin'.",
+            "Authentication failed. Have you tried being the admin?",
+            "That password is so wrong it hurts.",
+            "Beep boop. Human password rejected.",
+        ];
+        let errorIndex = 0;
+
+        async function login() {
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    token = data.token;
+                    localStorage.setItem('adminToken', token);
+                    errorDiv.style.display = 'none';
+                    showAdminPanel();
+                } else {
+                    // Show a funny error message, cycling through them
+                    errorDiv.textContent = funnyErrors[errorIndex % funnyErrors.length];
+                    errorDiv.style.display = 'block';
+                    errorIndex++;
+                    // Shake the input
+                    const input = document.getElementById('password');
+                    input.style.animation = 'none';
+                    input.offsetHeight; // Trigger reflow
+                    input.style.animation = 'shake 0.5s ease';
+                }
+            } catch (e) {
+                errorDiv.textContent = 'Connection error - is the server running?';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        async function showAdminPanel() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('adminPanel').classList.add('active');
+
+            // Load config first
+            await loadAppConfig();
+
+            loadSubmissions();
+            pollSlideshowState();
+            fetchTotalSlides();
+            startCountdownTimer();
+
+            // Start polling with intervals from config
+            const stateInterval = appConfig.polling?.admin_state || 2000;
+            const submissionsInt = appConfig.polling?.admin_submissions || 5000;
+            console.log(`[Polling] State: ${stateInterval}ms, Submissions: ${submissionsInt}ms`);
+
+            pollInterval = setInterval(pollSlideshowState, stateInterval);
+            submissionsInterval = setInterval(loadSubmissions, submissionsInt);
+        }
+
+        async function fetchTotalSlides() {
+            try {
+                // Use the slides API to get accurate count including injected slides
+                const res = await fetch('/api/slideshow/slides');
+                if (res.ok) {
+                    const data = await res.json();
+                    totalSlides = data.total || 0;
+                    injectedCount = data.injected_count || 0;
+                    // Cache the slides for quick modal open
+                    allSlides = data.slides || [];
+                }
+            } catch (e) {}
+        }
+
+        let isLoggingOut = false;
+
+        async function logout() {
+            // Prevent multiple logout calls
+            if (isLoggingOut) return;
+            isLoggingOut = true;
+
+            // Only call server logout if we have a token
+            if (token) {
+                try {
+                    await fetch('/api/admin/logout', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                } catch (e) {}
+            }
+
+            localStorage.removeItem('adminToken');
+            token = null;
+            if (pollInterval) clearInterval(pollInterval);
+            if (submissionsInterval) clearInterval(submissionsInterval);
+            if (countdownInterval) clearInterval(countdownInterval);
+            document.getElementById('adminPanel').classList.remove('active');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('password').value = '';
+            isLoggingOut = false;
+        }
+
+        async function loadSubmissions() {
+            // Don't make requests without a token
+            if (!token) return;
+
+            try {
+                const res = await fetch(`/api/submissions?status=${currentTab}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        logout();
+                        return;
+                    }
+                    throw new Error('Failed to load');
+                }
+
+                const data = await res.json();
+                updateCounts(data.counts);
+                renderSubmissions(data.submissions);
+
+                // Also refresh slides count (approvals create new slides)
+                fetchTotalSlides();
+            } catch (e) {
+                console.error('Load failed:', e);
+            }
+        }
+
+        function updateCounts(counts) {
+            document.getElementById('pendingCount').textContent = counts.pending || 0;
+            document.getElementById('approvedCount').textContent = counts.approved || 0;
+            document.getElementById('rejectedCount').textContent = counts.rejected || 0;
+        }
+
+        function renderSubmissions(submissions) {
+            const list = document.getElementById('submissionList');
+
+            if (submissions.length === 0) {
+                list.innerHTML = `<div class="empty-state">No ${currentTab} submissions</div>`;
+                return;
+            }
+
+            list.innerHTML = submissions.map(s => `
+                <div class="submission-card ${s.status}" data-id="${s.id}" data-status="${s.status}">
+                    <div class="submission-header">
+                        <span>${s.guest_name || 'Anonymous'}</span>
+                        <span>${formatTime(s.created_at)}</span>
+                    </div>
+                    <div class="submission-content">
+                        <h4>Best 2025 Memory</h4>
+                        <p>${escapeHtml(s.memory_2025)}</p>
+                    </div>
+                    <div class="submission-content">
+                        <h4>2026 Resolution</h4>
+                        <p>${escapeHtml(s.resolution_2026)}</p>
+                    </div>
+                    ${currentTab === 'pending' ? `
+                        <div class="submission-actions">
+                            <button class="action-btn approve" onclick="approveSubmission(${s.id})">Approve</button>
+                            <button class="action-btn reject" onclick="rejectSubmission(${s.id})">Reject</button>
+                        </div>
+                    ` : `
+                        <div class="card-expand-actions">
+                            <button class="card-expand-btn" onclick="event.stopPropagation(); confirmAction('pending', ${s.id})">
+                                <span class="icon">↩️</span>
+                                <span>Move to Pending</span>
+                            </button>
+                            <button class="card-expand-btn" onclick="event.stopPropagation(); confirmAction('delete', ${s.id})">
+                                <span class="icon">🗑️</span>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    `}
+                </div>
+            `).join('');
+
+            // Attach click handlers to each card for context menu
+            list.querySelectorAll('.submission-card').forEach(card => {
+                const id = parseInt(card.dataset.id);
+                const status = card.dataset.status;
+                setupCardMenu(card, id, status);
+            });
+        }
+
+        function switchTab(status) {
+            currentTab = status;
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.status === status);
+            });
+            loadSubmissions();
+        }
+
+        async function approveSubmission(id) {
+            try {
+                await fetch(`/api/submissions/${id}/approve`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadSubmissions();
+            } catch (e) {
+                console.error('Approve failed:', e);
+            }
+        }
+
+        async function rejectSubmission(id) {
+            try {
+                await fetch(`/api/submissions/${id}/reject`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadSubmissions();
+            } catch (e) {
+                console.error('Reject failed:', e);
+            }
+        }
+
+        async function pollSlideshowState() {
+            try {
+                const res = await fetch('/api/slideshow/state');
+                if (res.ok) {
+                    const state = await res.json();
+                    isPaused = state.is_paused;
+                    currentSlideIndex = state.current_slide_index;
+                    slideStartedAt = state.slide_started_at;
+                    slideDuration = state.slide_duration || 30000;
+                    hasConnected = !!state.current_slide;
+                    hiddenSlides = state.hidden_slides || [];
+                    // Sync mute state
+                    if (state.is_muted !== undefined && state.is_muted !== isMuted) {
+                        isMuted = state.is_muted;
+                        updateMuteButton();
+                    }
+                    // Use total_slides from slideshow's actual count (includes injected)
+                    if (state.total_slides > 0) {
+                        totalSlides = state.total_slides;
+                    }
+                    updateUI(state);
+                }
+            } catch (e) {
+                console.error('Poll failed:', e);
+            }
+        }
+
+        function updateUI(state) {
+            // Update pause button
+            const btn = document.getElementById('pauseResumeBtn');
+            const icon = document.getElementById('pauseIcon');
+            const text = document.getElementById('pauseText');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const nowPlaying = document.getElementById('nowPlaying');
+
+            if (isPaused) {
+                btn.className = 'control-btn resume';
+                icon.innerHTML = '&#9654;';
+                text.textContent = 'Play';
+                statusDot.className = 'status-dot paused';
+                statusText.textContent = 'Paused';
+            } else {
+                btn.className = 'control-btn pause';
+                icon.textContent = '| |';
+                text.textContent = 'Pause';
+                statusDot.className = 'status-dot playing';
+                statusText.textContent = 'Now Playing';
+            }
+
+            // Update slide info
+            const slideTitle = document.getElementById('slideTitle');
+            const slideIndex = document.getElementById('slideIndex');
+
+            if (state.current_slide) {
+                nowPlaying.classList.remove('waiting');
+                // Format slide name: "one-dance" -> "One Dance"
+                const formatted = state.current_slide
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                slideTitle.textContent = formatted;
+                // Check video count for this slide
+                checkVideoCount(state.current_slide);
+            } else {
+                nowPlaying.classList.add('waiting');
+                slideTitle.innerHTML = '<div class="spinner"></div>';
+                statusText.textContent = 'Connecting...';
+                // Hide next video button when not connected
+                document.getElementById('nextVideoBtn').classList.remove('visible');
+            }
+
+            slideIndex.textContent = `Slide ${state.current_slide_index + 1}${totalSlides ? '/' + totalSlides : ''}`;
+
+            // Update countdown display
+            updateCountdown();
+        }
+
+        async function togglePause(btn) {
+            await withControlLoading(btn, async () => {
+                const action = isPaused ? 'resume' : 'pause';
+                await fetch('/api/slideshow/control', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action })
+                });
+                isPaused = !isPaused;
+                await pollSlideshowState();
+            });
+        }
+
+        let isMuted = true;
+
+        async function toggleMute(btn) {
+            await withControlLoading(btn, async () => {
+                const endpoint = isMuted ? '/api/slideshow/unmute' : '/api/slideshow/mute';
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (res.ok) {
+                    const state = await res.json();
+                    isMuted = state.is_muted;
+                    updateMuteButton();
+                } else {
+                    console.error('Mute toggle failed:', res.status);
+                }
+            });
+        }
+
+        function updateMuteButton() {
+            const btn = document.getElementById('muteBtn');
+            btn.classList.toggle('unmuted', !isMuted);
+        }
+
+        async function controlSlideshow(action, btn) {
+            await withControlLoading(btn, async () => {
+                const state = await fetch('/api/slideshow/state').then(r => r.json());
+                const currentIndex = state.current_slide_index;
+                const hidden = state.hidden_slides || [];
+
+                // Find next/prev visible slide, skipping hidden ones
+                let newIndex = currentIndex;
+                const direction = action === 'next' ? 1 : -1;
+                const total = allSlides.length || totalSlides;
+
+                // Search for next visible slide (wrap around)
+                for (let i = 0; i < total; i++) {
+                    newIndex = (newIndex + direction + total) % total;
+                    const slideId = allSlides[newIndex]?.id || `slide-${newIndex}`;
+                    if (!hidden.includes(slideId)) {
+                        break;  // Found a visible slide
+                    }
+                }
+
+                await fetch('/api/slideshow/control', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'goto',
+                        slide_index: newIndex
+                    })
+                });
+
+                await pollSlideshowState();
+            });
+        }
+
+        function formatTime(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // SLIDE LIST MODAL
+        // ============================================
+
+        let allSlides = [];
+        let injectedCount = 0;
+
+        async function fetchSlideList() {
+            try {
+                // Use new API that includes injected slides
+                const res = await fetch('/api/slideshow/slides');
+                if (!res.ok) return [];
+
+                const data = await res.json();
+                allSlides = data.slides || [];
+                totalSlides = data.total || allSlides.length;
+                injectedCount = data.injected_count || 0;
+
+                return allSlides;
+            } catch (e) {
+                console.error('Failed to fetch slides:', e);
+                return [];
+            }
+        }
+
+        function renderSlideList() {
+            const container = document.getElementById('slideListItems');
+
+            if (allSlides.length === 0) {
+                container.innerHTML = '<div class="empty-state">No slides found</div>';
+                return;
+            }
+
+            container.innerHTML = allSlides.map((slide, index) => {
+                const isCurrent = index === currentSlideIndex;
+                const isInjected = slide.type === 'guest-submission';
+                const slideId = slide.id || `slide-${index}`;
+                const isHidden = hiddenSlides.includes(slideId);
+
+                // Get display name based on slide type
+                let displayName;
+                if (isInjected) {
+                    // For injected slides, show the actual quote (truncated)
+                    const quote = slide.text || '';
+                    const maxLen = 40;
+                    displayName = quote.length > maxLen ? quote.substring(0, maxLen) + '...' : quote;
+                } else {
+                    // For default slides, format the ID or use title
+                    displayName = slide.title || (slide.id || '').split('-')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+                }
+
+                const classes = ['slide-list-item'];
+                if (isCurrent) classes.push('current');
+                if (isInjected) classes.push(slide.template); // 'memory' or 'resolution'
+                if (isHidden) classes.push('hidden');
+
+                // For injected slides, show template type badge
+                const templateBadge = isInjected
+                    ? `<span class="slide-type">${slide.template === 'memory' ? '💭' : '🎯'}</span>`
+                    : '';
+
+                // Hide/unhide button
+                const hideBtn = `<button class="hide-btn"
+                    onclick="event.stopPropagation(); toggleSlideHidden('${slideId}', ${isHidden})"
+                    title="${isHidden ? 'Unhide this slide' : 'Hide this slide'}">
+                    ${isHidden ? 'Unhide' : 'Hide'}
+                </button>`;
+
+                return `
+                    <div class="${classes.join(' ')}" onclick="jumpToSlide(${index}, '${slideId}')">
+                        <span class="slide-num">${index + 1}</span>
+                        <span class="slide-name">${escapeHtml(displayName)}</span>
+                        ${templateBadge}
+                        ${hideBtn}
+                        <span class="hidden-indicator">hidden</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function openSlideList() {
+            document.getElementById('slideListModal').classList.add('active');
+
+            // Always refresh to get latest injected slides
+            await fetchSlideList();
+            renderSlideList();
+        }
+
+        function closeSlideList() {
+            document.getElementById('slideListModal').classList.remove('active');
+        }
+
+        function closeSlideListIfOutside(event) {
+            if (event.target.id === 'slideListModal') {
+                closeSlideList();
+            }
+        }
+
+        async function jumpToSlide(index, slideId) {
+            closeSlideList();
+
+            try {
+                await fetch('/api/slideshow/control', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'goto',
+                        slide_index: index,
+                        slide_id: slideId
+                    })
+                });
+                await pollSlideshowState();
+            } catch (e) {
+                console.error('Failed to jump to slide:', e);
+            }
+        }
+
+        async function toggleSlideHidden(slideId, isCurrentlyHidden) {
+            try {
+                const endpoint = isCurrentlyHidden
+                    ? `/api/slideshow/unhide/${slideId}`
+                    : `/api/slideshow/hide/${slideId}`;
+
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (res.ok) {
+                    const state = await res.json();
+                    hiddenSlides = state.hidden_slides || [];
+                    renderSlideList();  // Re-render to update UI
+                }
+            } catch (e) {
+                console.error('Failed to toggle slide visibility:', e);
+            }
+        }
+
+        // ============================================
+        // NEXT VIDEO BUTTON
+        // ============================================
+
+        let currentSlideVideoCount = 0;
+        let lastCheckedSlide = '';
+
+        async function checkVideoCount(slideId) {
+            if (!slideId || slideId === lastCheckedSlide) return;
+            lastCheckedSlide = slideId;
+
+            try {
+                const res = await fetch(`/api/video/${slideId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    currentSlideVideoCount = data.video_count || 0;
+                    updateNextVideoButton();
+                }
+            } catch (e) {
+                currentSlideVideoCount = 0;
+                updateNextVideoButton();
+            }
+        }
+
+        function updateNextVideoButton() {
+            const btn = document.getElementById('nextVideoBtn');
+            if (currentSlideVideoCount > 1) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        }
+
+        async function switchVideo() {
+            const btn = document.getElementById('nextVideoBtn');
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+
+            try {
+                await fetch('/api/slideshow/control', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action: 'switch_video' })
+                });
+            } catch (e) {
+                console.error('Failed to switch video:', e);
+            }
+
+            // Restore button after brief delay
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.style.opacity = '';
+            }, 1500);
+        }
+
+        // Enter key to login
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        // Load random background image
+        async function loadRandomBackground() {
+            try {
+                const res = await fetch('/api/backgrounds');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.images && data.images.length > 0) {
+                        const randomPic = data.images[Math.floor(Math.random() * data.images.length)];
+                        document.body.style.backgroundImage = `url('${randomPic}')`;
+                    }
+                }
+            } catch (e) {
+                console.log('Could not load background images');
+            }
+        }
+        loadRandomBackground();
+
+        // ============================================
+        // CONTEXT MENU
+        // ============================================
+
+        let currentContextSubmission = null;
+        let pendingAction = null;
+
+        // Setup click handler to expand/collapse cards
+        function setupCardMenu(card, submissionId, status) {
+            card.addEventListener('click', (e) => {
+                // Don't toggle if clicking on action buttons
+                if (e.target.closest('.action-btn') || e.target.closest('.card-expand-btn')) {
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+
+                // For non-pending cards, toggle expansion
+                if (status !== 'pending') {
+                    toggleCardExpansion(card);
+                }
+            });
+        }
+
+        function toggleCardExpansion(card) {
+            const wasExpanded = card.classList.contains('expanded');
+
+            // Close all other expanded cards
+            document.querySelectorAll('.submission-card.expanded').forEach(c => {
+                c.classList.remove('expanded');
+            });
+
+            // Toggle this card (unless it was already expanded)
+            if (!wasExpanded) {
+                card.classList.add('expanded');
+            }
+        }
+
+        // Close expanded cards when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.submission-card')) {
+                document.querySelectorAll('.submission-card.expanded').forEach(c => {
+                    c.classList.remove('expanded');
+                });
+            }
+        });
+
+        function showContextMenu(submissionId, status, x, y) {
+            currentContextSubmission = { id: submissionId, status };
+            const menu = document.getElementById('contextMenu');
+
+            // Build menu items based on status
+            let items = '';
+
+            if (status === 'approved' || status === 'rejected') {
+                items += `
+                    <button class="context-menu-item" onclick="confirmAction('pending', ${submissionId})">
+                        <span class="icon">↩️</span>
+                        <span>Move to Pending</span>
+                    </button>
+                `;
+            }
+
+            if (status === 'pending') {
+                items += `
+                    <button class="context-menu-item" onclick="approveSubmission(${submissionId}); closeContextMenu();">
+                        <span class="icon">✅</span>
+                        <span>Approve</span>
+                    </button>
+                    <button class="context-menu-item" onclick="rejectSubmission(${submissionId}); closeContextMenu();">
+                        <span class="icon">❌</span>
+                        <span>Reject</span>
+                    </button>
+                    <div class="context-menu-divider"></div>
+                `;
+            }
+
+            items += `
+                <button class="context-menu-item" onclick="confirmAction('delete', ${submissionId})">
+                    <span class="icon">🗑️</span>
+                    <span>Delete</span>
+                </button>
+            `;
+
+            menu.innerHTML = items;
+
+            // Position menu
+            const menuWidth = 180;
+            const menuHeight = menu.offsetHeight || 150;
+            const padding = 10;
+
+            // Adjust position to stay within viewport
+            let posX = x;
+            let posY = y;
+
+            if (posX + menuWidth > window.innerWidth - padding) {
+                posX = window.innerWidth - menuWidth - padding;
+            }
+            if (posX < padding) {
+                posX = padding;
+            }
+            if (posY + menuHeight > window.innerHeight - padding) {
+                posY = y - menuHeight;
+            }
+            if (posY < padding) {
+                posY = padding;
+            }
+
+            menu.style.left = posX + 'px';
+            menu.style.top = posY + 'px';
+            menu.classList.add('active');
+
+            // Close menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', closeContextMenuOnClickOutside);
+                document.addEventListener('touchstart', closeContextMenuOnClickOutside);
+            }, 10);
+        }
+
+        function closeContextMenu() {
+            const menu = document.getElementById('contextMenu');
+            menu.classList.remove('active');
+            currentContextSubmission = null;
+            document.removeEventListener('click', closeContextMenuOnClickOutside);
+            document.removeEventListener('touchstart', closeContextMenuOnClickOutside);
+        }
+
+        function closeContextMenuOnClickOutside(e) {
+            const menu = document.getElementById('contextMenu');
+            if (!menu.contains(e.target)) {
+                closeContextMenu();
+            }
+        }
+
+        // ============================================
+        // CONFIRMATION MODAL
+        // ============================================
+
+        function confirmAction(action, submissionId) {
+            closeContextMenu();
+            pendingAction = { action, submissionId };
+
+            const modal = document.getElementById('confirmModal');
+            const icon = document.getElementById('confirmIcon');
+            const title = document.getElementById('confirmTitle');
+            const confirmBtn = document.getElementById('confirmBtn');
+
+            if (action === 'delete') {
+                icon.textContent = '🗑️';
+                title.textContent = 'Delete Submission?';
+                confirmBtn.className = 'confirm-modal-btn confirm';
+            } else if (action === 'pending') {
+                icon.textContent = '↩️';
+                title.textContent = 'Move to Pending?';
+                confirmBtn.className = 'confirm-modal-btn confirm warning';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            pendingAction = null;
+        }
+
+        function closeConfirmModalIfOutside(event) {
+            if (event.target.id === 'confirmModal') {
+                closeConfirmModal();
+            }
+        }
+
+        async function executeConfirmedAction() {
+            if (!pendingAction) return;
+
+            const { action, submissionId } = pendingAction;
+            closeConfirmModal();
+
+            try {
+                if (action === 'delete') {
+                    await fetch(`/api/submissions/${submissionId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                } else if (action === 'pending') {
+                    await fetch(`/api/submissions/${submissionId}/pending`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                }
+                loadSubmissions();
+            } catch (e) {
+                console.error('Action failed:', e);
+            }
+        }
+    </script>
+</body>
+</html>

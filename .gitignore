@@ -1,0 +1,44 @@
+# Videos (download separately - too large for git)
+videos/
+
+# Background images (add your own, not tracked)
+background_images/*
+!background_images/.gitkeep
+
+# Data directory (database and state files)
+data/*
+!data/.gitkeep
+
+# QR codes (contain URLs specific to deployment)
+qr/
+
+# Legacy files (now in data/)
+/party.db
+/play_counts.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude Code local settings (may contain tokens)
+.claude/

@@ -1,0 +1,341 @@
+defaults:
+  quality: 720
+  format: mp4
+  duration: 60
+slides:
+  one-dance:
+    videos:
+    - url: https://www.youtube.com/watch?v=kU56R-1KFLc
+      start: 60
+      downloaded_file: kU56R-1KFLc_60-120.mp4
+      status: completed
+    - url: https://www.youtube.com/watch?v=uxpDa-c-4Mc
+      filename: drake-live-fallback
+      start: 15
+      status: completed
+      downloaded_file: drake-live-fallback_uxpDa-c-4Mc_15-75.mp4
+    - url: https://www.youtube.com/watch?v=RubBzkZzpUA
+      filename: hotline-bling-fallback
+      status: completed
+      downloaded_file: hotline-bling-fallback_RubBzkZzpUA_full.mp4
+  lemonade:
+    videos:
+    - url: https://www.youtube.com/watch?v=PeonBmeFR8o
+      start: 30
+      end: 90
+      status: completed
+      downloaded_file: PeonBmeFR8o_30-90.mp4
+    - url: https://www.youtube.com/watch?v=LrCHz1gwzTo
+      filename: sorry-fallback
+      status: completed
+      downloaded_file: sorry-fallback_LrCHz1gwzTo_full.mp4
+    - url: https://www.youtube.com/watch?v=QxsmWxxouIM
+      filename: lemonade-trailer-fallback
+      status: completed
+      downloaded_file: lemonade-trailer-fallback_QxsmWxxouIM_full.mp4
+  closer:
+    videos:
+    - url: https://www.youtube.com/watch?v=PT2_F-1esPk
+      start: 22
+      end: 82
+      status: completed
+      downloaded_file: PT2_F-1esPk_22-82.mp4
+    - url: https://www.youtube.com/watch?v=0zGcUoRlhmw
+      filename: closer-lyric-fallback
+      status: completed
+      downloaded_file: closer-lyric-fallback_0zGcUoRlhmw_full.mp4
+  rihanna-work:
+    videos:
+    - url: https://www.youtube.com/watch?v=HL1UzIK-flA
+      start: 5
+      end: 65
+      status: completed
+      downloaded_file: HL1UzIK-flA_5-65.mp4
+    - url: https://www.youtube.com/watch?v=mkEEHdLUpiE
+      filename: work-lyric-fallback
+      status: error
+      error: Video unavailable
+    - url: https://www.youtube.com/watch?v=KdS6HFQ_LUc
+      filename: needed-me-fallback
+      status: completed
+      downloaded_file: needed-me-fallback_KdS6HFQ_LUc_full.mp4
+  panda:
+    videos:
+    - url: https://www.youtube.com/watch?v=E5ONTXHS2mM
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: E5ONTXHS2mM_0-60.mp4
+  damn-daniel:
+    videos:
+    - url: https://www.youtube.com/watch?v=kfFcyTuopbI
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: kfFcyTuopbI_0-30.mp4
+      time_adjusted: end 60s > video length 30s → capped to 30s
+      actual_end: 30
+  harambe:
+    videos:
+    - url: https://www.youtube.com/watch?v=23um2h4YUwU
+      start: 0
+      end: 39
+      status: completed
+      downloaded_file: 23um2h4YUwU_0-39.mp4
+    - url: https://www.youtube.com/watch?v=3qLmlCfM3hE
+      status: completed
+      downloaded_file: 3qLmlCfM3hE_full.mp4
+  chewbacca-mom:
+    videos:
+    - url: https://www.youtube.com/watch?v=y3yRv5Jg5TI
+      start: 30
+      end: 90
+      status: completed
+      downloaded_file: y3yRv5Jg5TI_30-90.mp4
+    - url: https://www.youtube.com/watch?v=FmnDXRJ7btE
+      filename: chewbacca-fallback
+      status: completed
+      downloaded_file: chewbacca-fallback_FmnDXRJ7btE_full.mp4
+  bottle-flip:
+    videos:
+    - url: https://www.youtube.com/watch?v=GdUVtEeg9I4
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: GdUVtEeg9I4_0-30.mp4
+      time_adjusted: end 60s > video length 30s → capped to 30s
+      actual_end: 30
+    - url: https://www.youtube.com/watch?v=aesQNps9y9Y
+      status: completed
+      downloaded_file: aesQNps9y9Y_full.mp4
+  running-man:
+    videos:
+    - url: https://www.youtube.com/watch?v=oAIjPPKxWuQ
+      status: completed
+      downloaded_file: oAIjPPKxWuQ_full.mp4
+    - url: https://www.youtube.com/watch?v=MDPrxCjZ-nY
+      status: completed
+      downloaded_file: MDPrxCjZ-nY_full.mp4
+  mannequin-challenge:
+    videos:
+    - url: https://www.youtube.com/watch?v=qFaUhLkdRPg
+      status: completed
+      downloaded_file: qFaUhLkdRPg_full.mp4
+    - url: https://www.youtube.com/watch?v=b8m9zhNAgKs
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: b8m9zhNAgKs_0-60.mp4
+    - url: https://www.youtube.com/watch?v=PxUzHrqeCxY
+      status: completed
+      downloaded_file: PxUzHrqeCxY_full.mp4
+  pokemon-go:
+    videos:
+    - url: https://www.youtube.com/watch?v=2sj2iQyBTQs
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: 2sj2iQyBTQs_0-60.mp4
+    - url: https://www.youtube.com/watch?v=4UFwzI6ArVg
+      start: 204
+      status: completed
+      downloaded_file: 4UFwzI6ArVg_204-264.mp4
+  stranger-things:
+    videos:
+    - url: https://www.youtube.com/watch?v=b9EkMc79ZSU
+      status: completed
+      downloaded_file: b9EkMc79ZSU_full.mp4
+    - url: https://www.youtube.com/watch?v=e0Eo0D038rQ
+      status: completed
+      downloaded_file: e0Eo0D038rQ_full.mp4
+  hamilton:
+    videos:
+    - url: https://www.youtube.com/watch?v=DSCKfXpAGHc
+      start: 15
+      status: completed
+      downloaded_file: DSCKfXpAGHc_15-60.mp4
+      time_adjusted: end 75s > video length 60s → capped to 60s
+      actual_end: 60
+    - url: https://www.youtube.com/watch?v=WNFf7nMIGnE
+      filename: hamilton-grammys-fallback
+      status: completed
+      downloaded_file: hamilton-grammys-fallback_WNFf7nMIGnE_full.mp4
+  carpool-karaoke:
+    videos:
+    - url: https://www.youtube.com/watch?v=Nck6BZga7TQ
+      start: 180
+      end: 240
+      status: completed
+      downloaded_file: Nck6BZga7TQ_180-240.mp4
+  deadpool:
+    videos:
+    - url: https://www.youtube.com/watch?v=ONHBaC-pfsk
+      start: 15
+      end: 75
+      status: completed
+      downloaded_file: ONHBaC-pfsk_15-75.mp4
+    - url: https://www.youtube.com/watch?v=Xithigfg7dA
+      start: 10
+      status: completed
+      downloaded_file: Xithigfg7dA_10-70.mp4
+  la-la-land:
+    videos:
+    - url: https://www.youtube.com/watch?v=0pdqf4P9MB8
+      start: 20
+      end: 60
+      status: completed
+      downloaded_file: 0pdqf4P9MB8_20-60.mp4
+    - url: https://www.youtube.com/watch?v=cZAw8qxn0ZE
+      filename: city-of-stars-fallback
+      status: completed
+      downloaded_file: city-of-stars-fallback_cZAw8qxn0ZE_full.mp4
+  finding-dory:
+    videos:
+    - url: https://www.youtube.com/watch?v=JhvrQeY3doI
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: JhvrQeY3doI_0-60.mp4
+    - url: https://www.youtube.com/watch?v=3JNLwlcPBPI
+      filename: finding-dory-trailer2-fallback
+      status: completed
+      downloaded_file: finding-dory-trailer2-fallback_3JNLwlcPBPI_full.mp4
+  cubs-win:
+    videos:
+    - url: https://www.youtube.com/watch?v=HOp8w2PgHlM
+      start: 0
+      end: 40
+      status: completed
+      downloaded_file: HOp8w2PgHlM_0-40.mp4
+    - url: https://www.youtube.com/watch?v=qraVPyZxlTo
+      start: 8
+      status: completed
+      downloaded_file: qraVPyZxlTo_8-61.mp4
+      time_adjusted: end 68s > video length 61s → capped to 61s
+      actual_end: 61
+  cavs-comeback:
+    videos:
+    - url: https://www.youtube.com/watch?v=wgVOgGLtPtc
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: wgVOgGLtPtc_0-60.mp4
+    - url: https://www.youtube.com/watch?v=fZ8yCJgsF_4
+      filename: cavs-fallback
+      status: completed
+      downloaded_file: cavs-fallback_fZ8yCJgsF_4_full.mp4
+  kobe-finale:
+    videos:
+    - url: https://www.youtube.com/watch?v=Rx2inwUj_F0
+      start: 264
+      status: completed
+      downloaded_file: Rx2inwUj_F0_264-324.mp4
+    - url: https://www.youtube.com/watch?v=fl6LaH-MXM0
+      start: 265
+      status: completed
+      downloaded_file: fl6LaH-MXM0_265-325.mp4
+  kaepernick:
+    videos:
+    - url: https://www.youtube.com/watch?v=ka0446tibig
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: ka0446tibig_0-60.mp4
+    - url: https://www.youtube.com/watch?v=TNEby1Nv1Kc
+      status: completed
+      downloaded_file: TNEby1Nv1Kc_full.mp4
+  olympics:
+    videos:
+    - url: https://www.youtube.com/watch?v=93dC0o2aHto
+      start: 15
+      end: 75
+      status: completed
+      downloaded_file: 93dC0o2aHto_15-75.mp4
+    - url: https://www.youtube.com/watch?v=UmIYanq5gH8
+      start: 180
+      status: completed
+      downloaded_file: UmIYanq5gH8_180-240.mp4
+  leo-wins:
+    videos:
+    - url: https://www.youtube.com/watch?v=xpyrefzvTpI
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: xpyrefzvTpI_0-60.mp4
+    - url: https://www.youtube.com/watch?v=_8P8MgsFNZQ
+      start: 54
+      status: completed
+      downloaded_file: _8P8MgsFNZQ_54-114.mp4
+  rip-vine:
+    videos:
+    - url: https://www.youtube.com/watch?v=0DMGE0jq13U&t=14s
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: 0DMGE0jq13U_0-60.mp4
+  rip-bowie:
+    videos:
+    - url: https://www.youtube.com/watch?v=bsYp9q3QNaQ&list=RDbsYp9q3QNaQ&start_radio=1
+      start: 90
+      status: completed
+      downloaded_file: bsYp9q3QNaQ_90-150.mp4
+    - url: https://www.youtube.com/watch?v=pXSGocWifAg
+      start: 22
+      status: completed
+      downloaded_file: pXSGocWifAg_22-82.mp4
+  rip-prince:
+    videos:
+    - url: https://www.youtube.com/watch?v=TvnYmWpD_T8
+      start: 28
+      status: completed
+      downloaded_file: TvnYmWpD_T8_28-88.mp4
+    - url: https://www.youtube.com/watch?v=UG3VcCAlUgE
+      start: 8
+      status: completed
+      downloaded_file: UG3VcCAlUgE_8-68.mp4
+  headphone-jack:
+    videos:
+    - url: https://www.youtube.com/watch?v=NS0txu_Kzl8
+      start: 6028
+      status: completed
+      downloaded_file: NS0txu_Kzl8_6028-6088.mp4
+  note-7:
+    videos:
+    - url: https://www.youtube.com/watch?v=wkx_2k4nGJE
+      start: 9
+      status: completed
+      downloaded_file: wkx_2k4nGJE_9-69.mp4
+    - url: https://www.youtube.com/watch?v=wDZyaRk8jEc
+      status: completed
+      downloaded_file: wDZyaRk8jEc_full.mp4
+  spacex-landing:
+    videos:
+    - url: https://www.youtube.com/watch?v=ANv5UfZsvZQ
+      start: 100
+      status: completed
+      downloaded_file: ANv5UfZsvZQ_100-160.mp4
+    - url: https://www.youtube.com/watch?v=glEvogjdEVY
+      filename: spacex-fallback
+      status: completed
+      downloaded_file: spacex-fallback_glEvogjdEVY_full.mp4
+  finale:
+    videos:
+    - url: https://www.youtube.com/watch?v=vi7cuAjArRs
+      start: 0
+      end: 60
+      status: completed
+      downloaded_file: vi7cuAjArRs_0-60.mp4
+    - url: https://www.youtube.com/watch?v=hsCJU9djdIc
+      filename: fireworks-fallback
+      status: completed
+      downloaded_file: fireworks-fallback_hsCJU9djdIc_full.mp4
+    - url: https://www.youtube.com/watch?v=sCNrK-n68CM
+      filename: nye-celebration-fallback
+      status: completed
+      downloaded_file: nye-celebration-fallback_sCNrK-n68CM_full.mp4
+  election:
+    videos:
+    - url: https://www.youtube.com/watch?v=VvwtdqeFuzc
+      start: 25235
+      status: completed
+      downloaded_file: VvwtdqeFuzc_25235-25295.mp4

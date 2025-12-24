@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥳</text></svg>">
+    <title>2016 - What A Year</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Loading state */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            z-index: 1000;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: #e94560;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .slideshow {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* ============================================
+           BASE SLIDE STYLES
+           ============================================ */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 1.2s ease, transform 1.2s ease;
+            pointer-events: none;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                rgba(0,0,0,var(--overlay, 0.6)) 0%,
+                rgba(0,0,0,calc(var(--overlay, 0.6) - 0.2)) 50%,
+                rgba(0,0,0,var(--overlay, 0.6)) 100%);
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            max-width: 85vw;
+        }
+
+        .slide-category {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.8);
+        }
+
+        .slide-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: var(--title-size, 8rem);
+            line-height: 0.9;
+            margin-bottom: 30px;
+            background: var(--title-gradient, linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(4px 4px 20px rgba(0,0,0,0.5));
+        }
+
+        .slide-subtitle {
+            font-size: 1.8rem;
+            color: #fff;
+            max-width: 70vw;
+            line-height: 1.6;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.8);
+        }
+
+        .slide-emoji {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(4px 4px 20px rgba(0,0,0,0.5));
+        }
+
+        /* ============================================
+           MOOD STYLES (Title gradients & colors)
+           ============================================ */
+        .mood-warm {
+            --title-gradient: linear-gradient(135deg, #e94560, #ff6b6b, #feca57);
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .mood-cool {
+            --title-gradient: linear-gradient(135deg, #48dbfb, #a29bfe, #74b9ff);
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+        }
+
+        .mood-dark {
+            --title-gradient: linear-gradient(135deg, #636e72, #b2bec3, #dfe6e9);
+            --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            --overlay: 0.8;
+        }
+
+        .mood-neon {
+            --title-gradient: linear-gradient(135deg, #ff6b6b, #ff9ff3, #f368e0);
+            --bg-gradient: linear-gradient(135deg, #16213e 0%, #3d1f2d 100%);
+            --overlay: 0.5;
+        }
+
+        .mood-retro {
+            --title-gradient: linear-gradient(135deg, #f9ca24, #f0932b, #eb4d4b);
+            --bg-gradient: linear-gradient(135deg, #2d1f3d 0%, #3d2a1f 100%);
+        }
+
+        .mood-meme {
+            --title-gradient: linear-gradient(135deg, #00b894, #55efc4, #81ecec);
+            --bg-gradient: linear-gradient(135deg, #1e3a2f 0%, #1a1a2e 100%);
+            --overlay: 0.7;
+        }
+
+        .mood-golden {
+            --title-gradient: linear-gradient(135deg, #fff, #feca57, #f9ca24);
+            --bg-gradient: linear-gradient(135deg, #0f3460 0%, #e94560 100%);
+            --overlay: 0.5;
+        }
+
+        /* ============================================
+           LAYOUT: SIMPLE (Unified template)
+           ============================================ */
+        .layout-simple {
+            background: var(--bg-gradient);
+            justify-content: flex-end;
+            align-items: stretch;
+            text-align: left;
+            padding: 0;
+        }
+
+        .layout-simple .slide-content {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 48px 64px 64px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .layout-simple .slide-category {
+            letter-spacing: 6px;
+            color: rgba(255,255,255,0.65);
+            margin: 0;
+        }
+
+        .layout-simple .slide-title {
+            --title-size: 7rem;
+            margin: 0;
+            max-width: 80vw;
+        }
+
+        .layout-simple .slide-subtitle {
+            margin: 0;
+            max-width: 70vw;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ============================================
+           TITLE SIZE MODIFIERS
+           ============================================ */
+        .size-small .slide-title { --title-size: 6rem; }
+        .size-normal .slide-title { --title-size: 8rem; }
+        .size-large .slide-title { --title-size: 10rem; }
+        .size-huge .slide-title { --title-size: 12rem; }
+
+        /* ============================================
+           YOUTUBE VIDEO BACKGROUNDS
+           ============================================ */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+            background: #0a0a0a;
+        }
+
+        .video-background iframe,
+        .video-background video {
+            /* Use viewport units for guaranteed full-screen coverage */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            object-fit: cover;
+        }
+
+        /* Video featured (like meme layout) */
+        .video-featured {
+            width: 100%;
+            max-width: 60vw;
+            aspect-ratio: 16/9;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 4px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .video-featured iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Mute/unmute button */
+        .mute-btn {
+            position: fixed;
+            top: 30px;
+            right: 160px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .mute-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mute-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .mute-btn.unmuted {
+            background: rgba(233, 69, 96, 0.3);
+            border-color: #e94560;
+        }
+
+        /* ============================================
+           COUNTDOWN TIMER
+           ============================================ */
+        .countdown-timer {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 50px;
+            height: 50px;
+            z-index: 100;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .countdown-timer:hover {
+            opacity: 1;
+        }
+
+        .countdown-ring {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .countdown-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 2;
+        }
+
+        .countdown-ring-progress {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.8);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-dasharray: 100.53;  /* 2 * PI * 16 (radius) */
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        .countdown-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .countdown-timer.paused .countdown-ring-progress {
+            stroke: rgba(255, 200, 100, 0.8);
+        }
+
+        /* ============================================
+           UI ELEMENTS
+           ============================================ */
+        .progress {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #e94560, #feca57, #48dbfb);
+            transition: width 0.3s ease;
+            z-index: 100;
+        }
+
+        .controls-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 110px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .controls-hint.visible {
+            opacity: 1;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fullscreen-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .slide-title {
+                --title-size: 4rem !important;
+            }
+            .slide-subtitle {
+                font-size: 1.2rem;
+            }
+            .layout-simple .slide-content {
+                padding: 32px 28px 44px;
+            }
+            .layout-simple .slide-title {
+                max-width: 90vw;
+            }
+            .meme-image {
+                max-width: 280px;
+                max-height: 250px;
+            }
+        }
+
+        /* ============================================
+           GUEST SUBMISSION SLIDES
+           ============================================ */
+
+        .slide.guest-submission::before {
+            background: none !important;
+        }
+
+        .slide.guest-submission {
+            padding: 0 !important;
+        }
+
+        /* ============================================
+           RESOLUTION SLIDES - Yellow Theme
+           ============================================ */
+        .slide.guest-submission.resolution-slide {
+            background: #FFC107;  /* Exact yellow matching the resolutions.png */
+        }
+
+        .resolution-slide .guest-slide-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .resolution-slide .theme-badge {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 360px;
+            height: auto;
+            filter: drop-shadow(4px 4px 15px rgba(0,0,0,0.15));
+            z-index: 1;
+        }
+
+        .resolution-slide .guest-text-container {
+            text-align: center;
+            max-width: 70%;
+            padding: 0;
+            background: none;
+            border-radius: 0;
+            backdrop-filter: none;
+            z-index: 2;
+            margin-top: 120px;  /* Offset to account for corner image */
+        }
+
+        .resolution-slide .guest-text {
+            font-size: 3rem;
+            font-weight: 600;
+            line-height: 1.4;
+            color: #1a1a2e;  /* Dark text on yellow */
+            text-shadow: none;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .resolution-slide .guest-name {
+            font-size: 1.8rem;
+            color: rgba(26, 26, 46, 0.8);
+            font-style: normal;
+            font-weight: 500;
+            text-shadow: none;
+        }
+
+        /* ============================================
+           MEMORY SLIDES - Pink Theme
+           ============================================ */
+        .slide.guest-submission.memory-slide {
+            background: #E91E63;  /* Exact pink matching the memories.png */
+        }
+
+        .memory-slide .guest-slide-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .memory-slide .theme-badge {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 360px;
+            height: auto;
+            filter: drop-shadow(4px 4px 15px rgba(0,0,0,0.15));
+            z-index: 1;
+        }
+
+        .memory-slide .guest-text-container {
+            text-align: center;
+            max-width: 70%;
+            padding: 0;
+            background: none;
+            border-radius: 0;
+            backdrop-filter: none;
+            z-index: 2;
+            margin-top: 120px;
+        }
+
+        .memory-slide .guest-text {
+            font-size: 3rem;
+            font-weight: 600;
+            line-height: 1.4;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .memory-slide .guest-name {
+            font-size: 1.8rem;
+            color: rgba(255,255,255,0.9);
+            font-style: normal;
+            font-weight: 500;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        }
+
+        /* ============================================
+           GUEST SLIDES - Responsive
+           ============================================ */
+        @media (max-width: 768px) {
+            /* Resolution responsive */
+            .resolution-slide .theme-badge {
+                width: 220px;
+                top: 18px;
+                left: 18px;
+            }
+            .resolution-slide .guest-text {
+                font-size: 1.8rem;
+            }
+            .resolution-slide .guest-name {
+                font-size: 1.2rem;
+            }
+            .resolution-slide .guest-text-container {
+                max-width: 90%;
+                margin-top: 40px;
+                padding: 0 20px;
+            }
+
+            /* Memory responsive */
+            .memory-slide .theme-badge {
+                width: 220px;
+                top: 18px;
+                left: 18px;
+            }
+            .memory-slide .guest-text {
+                font-size: 1.8rem;
+            }
+            .memory-slide .guest-name {
+                font-size: 1.2rem;
+            }
+            .memory-slide .guest-text-container {
+                max-width: 90%;
+                margin-top: 40px;
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">Loading 2016...</div>
+
+    <div class="slideshow" id="slideshow"></div>
+
+    <div class="progress" id="progress"></div>
+    <div class="controls-hint">SPACE to pause · arrows to navigate · F for fullscreen</div>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">FULLSCREEN</button>
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔇 UNMUTE</button>
+
+    <!-- Countdown Timer -->
+    <div class="countdown-timer" id="countdownTimer">
+        <svg class="countdown-ring" viewBox="0 0 36 36">
+            <circle class="countdown-ring-bg" cx="18" cy="18" r="16"/>
+            <circle class="countdown-ring-progress" id="countdownProgress" cx="18" cy="18" r="16"/>
+        </svg>
+        <span class="countdown-text" id="countdownText">30</span>
+    </div>
+
+    <!-- js-yaml library for parsing YAML -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        let config = null;          // Slideshow config from slideshow.yaml
+        let appConfig = null;       // App config from config.yaml (via API)
+        let slides = [];
+        let currentSlide = 0;
+        let autoplayInterval;
+        let isPaused = false;
+        let hiddenSlides = [];      // Array of hidden slide IDs (from admin)
+
+        // Global HTML escaping function to prevent XSS
+        function escapeHtml(str) {
+            if (str == null) return '';
+            const div = document.createElement('div');
+            div.textContent = String(str);
+            return div.innerHTML;
+        }
+
+        // Load app configuration from server
+        async function loadAppConfig() {
+            try {
+                const response = await fetch('/api/config');
+                if (response.ok) {
+                    appConfig = await response.json();
+                    console.log('[Config] App config loaded:', appConfig);
+                }
+            } catch (e) {
+                console.warn('[Config] Failed to load app config, using defaults');
+            }
+        }
+
+        // ============================================
+        // COUNTDOWN TIMER
+        // ============================================
+        let countdownInterval = null;
+        let slideStartTime = 0;
+        const CIRCUMFERENCE = 2 * Math.PI * 16;  // 100.53
+
+        function startCountdown() {
+            slideStartTime = Date.now();
+            updateCountdown();
+
+            // Update every 100ms for smooth animation
+            countdownInterval = setInterval(updateCountdown, 100);
+        }
+
+        function updateCountdown() {
+            const duration = getCurrentSlideDuration();
+            const elapsed = Date.now() - slideStartTime;
+            const remaining = Math.max(0, duration - elapsed);
+            const progress = elapsed / duration;
+
+            // Update circle - stroke-dashoffset goes from CIRCUMFERENCE (empty) to 0 (full)
+            const progressEl = document.getElementById('countdownProgress');
+            const offset = CIRCUMFERENCE * (1 - progress);
+            progressEl.style.strokeDashoffset = offset;
+
+            // Update text - show remaining seconds
+            const remainingSeconds = Math.ceil(remaining / 1000);
+            document.getElementById('countdownText').textContent = remainingSeconds;
+        }
+
+        function stopCountdown() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        }
+
+        function resetCountdown() {
+            stopCountdown();
+            const progressEl = document.getElementById('countdownProgress');
+            progressEl.style.strokeDashoffset = CIRCUMFERENCE;
+
+            const duration = getCurrentSlideDuration();
+            document.getElementById('countdownText').textContent = Math.ceil(duration / 1000);
+        }
+
+        function pauseCountdown() {
+            stopCountdown();
+            document.getElementById('countdownTimer').classList.add('paused');
+        }
+
+        function resumeCountdown() {
+            document.getElementById('countdownTimer').classList.remove('paused');
+            // Adjust start time to account for time already elapsed
+            const duration = getCurrentSlideDuration();
+            const progressEl = document.getElementById('countdownProgress');
+            const currentOffset = parseFloat(progressEl.style.strokeDashoffset) || CIRCUMFERENCE;
+            const progress = 1 - (currentOffset / CIRCUMFERENCE);
+            slideStartTime = Date.now() - (progress * duration);
+
+            countdownInterval = setInterval(updateCountdown, 100);
+        }
+
+        // ============================================
+        // VIDEO MANAGEMENT (Local files only)
+        // ============================================
+        let localVideos = {};        // Map of slideId -> HTMLVideoElement
+        let videoConfigs = {};       // Map of slideId -> { videoConfig, containerId }
+        let isMuted = true;          // Start muted (required for autoplay)
+
+        // ============================================
+        // SERVER VIDEO API
+        // ============================================
+        const USE_SERVER_VIDEOS = true;  // Set to false to use static config only
+
+        // Get API timeout from config (with fallback)
+        function getApiTimeout() {
+            return appConfig?.video?.api_timeout || 10000;
+        }
+
+        /**
+         * Fetch the next video to play for a slide from the server.
+         * Returns the video path, or null if no video available.
+         */
+        async function fetchVideoForSlide(slideId) {
+            if (!USE_SERVER_VIDEOS) {
+                return null;
+            }
+
+            try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), getApiTimeout());
+
+                const response = await fetch(`/api/video/${slideId}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' },
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeout);
+
+                if (!response.ok) {
+                    console.warn(`[Video API] Error for ${slideId}: ${response.status}`);
+                    return null;
+                }
+
+                const data = await response.json();
+
+                if (data.video_path) {
+                    console.log(`[Video API] Got video for ${slideId}: ${data.video_path} (plays: ${data.play_count})`);
+                    return data.video_path;
+                } else {
+                    console.log(`[Video API] No videos for ${slideId}`);
+                    return null;
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.warn(`[Video API] Request timed out for ${slideId}`);
+                } else {
+                    console.warn(`[Video API] Error: ${error.message}`);
+                }
+                return null;
+            }
+        }
+
+        /**
+         * Report that a video started playing.
+         * This increments the play count on the server.
+         */
+        async function reportVideoPlayed(slideId) {
+            if (!USE_SERVER_VIDEOS) return;
+
+            try {
+                // Get the actual video path that was played
+                const video = localVideos[slideId];
+                const source = video?.querySelector('source');
+                const videoPath = source?.src ? new URL(source.src, window.location.origin).pathname : null;
+
+                const response = await fetch(`/api/video/${slideId}/played`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ video_path: videoPath })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`[Video API] Reported play for ${slideId}: ${data.video_path} (count: ${data.new_play_count})`);
+                }
+            } catch (error) {
+                // Non-critical - don't block playback
+                console.warn(`[Video API] Failed to report play: ${error.message}`);
+            }
+        }
+
+        /**
+         * Handle video switch request from admin remote.
+         * Marks current video as played and loads the next one.
+         */
+        async function handleVideoSwitch() {
+            const currentSlideId = slides[currentSlide]?.dataset?.id;
+            if (!currentSlideId) return;
+
+            try {
+                // Report current video as played to increment its count (with video_path)
+                await reportVideoPlayed(currentSlideId);
+
+                // Get the slide config
+                const slideConfig = config.slides.find(s => s.id === currentSlideId);
+                const videoConfig = slideConfig?.video || {};
+
+                // Load the next video (server will now return a different one due to updated count)
+                await loadVideoForSlide(currentSlideId, videoConfig);
+
+                // Acknowledge the switch request
+                await fetch('/api/slideshow/video-switched', { method: 'POST' });
+
+                console.log(`[Video] Switched to next video for "${currentSlideId}"`);
+            } catch (error) {
+                console.error('[Video] Failed to switch video:', error);
+            }
+        }
+
+        /**
+         * Load video for a slide based on its video config.
+         * Server picks least-played video, then we look up per-file timestamps.
+         *
+         * New config format:
+         *   video:
+         *     filename.mp4:
+         *       start: 10
+         *       end: 40
+         */
+        async function loadVideoForSlide(slideId, videoConfig) {
+            // Ask server for least-played video
+            let videoPath = await fetchVideoForSlide(slideId);
+
+            if (!videoPath) {
+                console.log(`[Video] No video available for ${slideId}`);
+                return;
+            }
+
+            // Extract filename from path (e.g., "/videos/pokemon-go/abc.mp4" -> "abc.mp4")
+            const filename = videoPath.split('/').pop();
+
+            // Look up per-file timestamps in config
+            // Supports both per-file config and slide-level defaults:
+            //   video:
+            //     start: 10              # Default for all videos
+            //     specific.mp4:          # Override for this file
+            //       start: 20
+            let start = 0;
+            let end = null;
+            let resize = null;
+
+            console.log(`[Video] Looking up config for "${filename}" in:`, JSON.stringify(videoConfig));
+
+            if (videoConfig && typeof videoConfig === 'object') {
+                // First check for slide-level defaults (non-object values at top level)
+                if (typeof videoConfig.start === 'number') {
+                    start = videoConfig.start;
+                    console.log(`[Video] Using slide default: start=${start}`);
+                }
+                if (typeof videoConfig.end === 'number') {
+                    end = videoConfig.end;
+                }
+
+                // Then check for file-specific config (overrides defaults)
+                if (filename) {
+                    const fileConfig = videoConfig[filename];
+                    if (fileConfig && typeof fileConfig === 'object') {
+                        start = fileConfig.start ?? start;
+                        end = fileConfig.end ?? end;
+                        if (fileConfig.resize && typeof fileConfig.resize === 'object') {
+                            resize = {
+                                mode: fileConfig.resize.mode || 'cover',
+                                scale: typeof fileConfig.resize.scale === 'number' ? fileConfig.resize.scale : 1
+                            };
+                        }
+                        console.log(`[Video] Found file config for "${filename}": start=${start}, end=${end || 'none'}, resize=${JSON.stringify(resize) || 'none'}`);
+                    } else {
+                        console.log(`[Video] No file config for "${filename}", using defaults: start=${start}`);
+                    }
+                }
+            }
+
+            // Update or create the video player with timestamps
+            updateVideoSource(slideId, videoPath, { start, end, resize });
+        }
+
+        /**
+         * Update or create a video element for a slide with a new source.
+         * @param {string} slideId - The slide ID
+         * @param {string} videoPath - Full path to video file
+         * @param {object} timestamps - { start: number, end: number|null }
+         */
+        function updateVideoSource(slideId, videoPath, timestamps = {}) {
+            const existingVideo = localVideos[slideId];
+            const start = timestamps.start || 0;
+            const end = timestamps.end || null;
+            const resize = timestamps.resize || null;
+
+            if (existingVideo) {
+                const source = existingVideo.querySelector('source');
+                const currentSrc = source?.src || '';
+
+                // Only update if path is different
+                if (!currentSrc.endsWith(videoPath)) {
+                    console.log(`[Video] Updating source for ${slideId}: ${videoPath}`);
+                    source.src = videoPath;
+
+                    // Update timestamps
+                    existingVideo._startAt = start;
+                    existingVideo._endAt = end;
+                    existingVideo._resizeConfig = resize;
+
+                    existingVideo.load();
+                }
+            } else {
+                // Create new video player
+                const slideEl = document.querySelector(`[data-id="${slideId}"]`);
+                if (!slideEl) {
+                    console.error(`[Video] Slide element not found for ${slideId}`);
+                    return;
+                }
+
+                // Find or create video-background container
+                let container = slideEl.querySelector('.video-background');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.className = 'video-background';
+                    slideEl.insertBefore(container, slideEl.firstChild);
+                    console.log(`[Video] Created video container for ${slideId}`);
+                } else {
+                    container.innerHTML = '';
+                }
+
+                // Build video config for createLocalVideoPlayer
+                const fullVideoConfig = {
+                    localVideo: videoPath,
+                    startAt: start,
+                    endAt: end,
+                    resize
+                };
+
+                const created = createLocalVideoPlayer(slideId, fullVideoConfig, `video-${slideId}`);
+                if (!created) {
+                    console.error(`[Video] Failed to create video player for ${slideId}`);
+                }
+            }
+        }
+
+        // ============================================
+        // HTML5 LOCAL VIDEO PLAYER
+        // ============================================
+
+        // Create an HTML5 video player for local files with optional start/end timestamps
+        function createLocalVideoPlayer(slideId, videoConfig, containerId) {
+            const localPath = videoConfig.localVideo;
+            if (!localPath) return false;
+
+            const containerParent = document.querySelector(`[data-id="${slideId}"] .video-background`);
+            if (!containerParent) return false;
+
+            // Get timestamps from config
+            const startAt = videoConfig.startAt || 0;
+            const endAt = videoConfig.endAt || null;
+            const resize = videoConfig.resize || null;
+
+            console.log(`[Video] Creating local video player for "${slideId}": ${localPath}` +
+                (startAt || endAt ? ` (${startAt}s - ${endAt || 'end'})` : ''));
+
+            // Create video element
+            const video = document.createElement('video');
+            video.id = containerId;
+            video.muted = true;  // Required for autoplay
+            video.autoplay = true;  // Auto-start when ready
+            video.playsInline = true;
+            video.preload = 'auto';
+            // Don't use native loop - we handle looping manually for timestamp support
+
+            // Store timestamp config on video element for access in event handlers
+            video._startAt = startAt;
+            video._endAt = endAt;
+            video._slideId = slideId;
+            video._resizeConfig = resize;
+
+            // Add source - ensure absolute path from root
+            const source = document.createElement('source');
+            const videoSrc = localPath.startsWith('/') ? localPath : '/' + localPath;
+            source.src = videoSrc;
+            video.appendChild(source);
+            console.log(`[Video] Source set to: ${videoSrc}`);
+
+            // Apply resize/zoom if provided
+            if (resize && typeof resize === 'object') {
+                const mode = resize.mode || 'cover';
+                const scale = typeof resize.scale === 'number' ? resize.scale : 1;
+                if (mode === 'zoom') {
+                    video.style.objectFit = 'cover';
+                    video.style.transform = `scale(${scale})`;
+                    video.style.transformOrigin = 'center center';
+                } else if (mode === 'contain') {
+                    video.style.objectFit = 'contain';
+                    video.style.transform = 'none';
+                } else { // cover/default
+                    video.style.objectFit = 'cover';
+                    video.style.transform = 'none';
+                }
+            } else {
+                video.style.objectFit = 'cover';
+                video.style.transform = 'none';
+            }
+
+            // When metadata loads, seek to startAt and validate timestamps
+            // NOTE: Use video._startAt instead of closure variable - allows updating timestamps on reused video
+            video.addEventListener('loadedmetadata', function() {
+                const duration = this.duration;
+                const targetStart = this._startAt || 0;
+                const targetEnd = this._endAt || null;
+
+                console.log(`[Video] Metadata loaded for "${this._slideId}": duration=${duration.toFixed(1)}s, targetStart=${targetStart}`);
+
+                // Validate and clamp timestamps
+                let validStart = Math.min(Math.max(0, targetStart), duration - 0.5);
+                let validEnd = targetEnd ? Math.min(targetEnd, duration) : duration;
+
+                // Handle invalid range (startAt >= endAt)
+                if (validStart >= validEnd) {
+                    console.warn(`[Video] Invalid time range for "${this._slideId}" (${targetStart}-${targetEnd}), using full video`);
+                    validStart = 0;
+                    validEnd = duration;
+                }
+
+                // Log if timestamps were clamped
+                if (targetStart !== validStart || (targetEnd && targetEnd !== validEnd)) {
+                    console.warn(`[Video] Timestamps clamped for "${this._slideId}": ${validStart.toFixed(1)}s - ${validEnd.toFixed(1)}s`);
+                }
+
+                // Store validated timestamps
+                this._startAt = validStart;
+                this._endAt = validEnd;
+
+                // Seek to start position
+                if (validStart > 0) {
+                    this.currentTime = validStart;
+                    console.log(`[Video] Seeking "${this._slideId}" to startAt: ${validStart.toFixed(1)}s`);
+                }
+            });
+
+            // Handle successful load - ensure video plays when ready
+            video.addEventListener('canplay', () => {
+                console.log(`[Video] Local video ready: "${slideId}"`);
+                // If this slide is active and video is paused, start playing
+                const slideEl = document.querySelector(`[data-id="${slideId}"]`);
+                if (slideEl?.classList.contains('active') && video.paused) {
+                    console.log(`[Video] Auto-starting video for active slide: "${slideId}"`);
+                    video.play().catch(err => console.warn(`[Video] Canplay play failed: ${err.message}`));
+                }
+            });
+
+            // Monitor playback for endAt boundary - loop back to startAt
+            video.addEventListener('timeupdate', () => {
+                if (video._endAt && video.currentTime >= video._endAt) {
+                    console.log(`[Video] Reached endAt for "${slideId}", looping to ${video._startAt}s`);
+                    video.currentTime = video._startAt || 0;
+                }
+            });
+
+            // Loop back to startAt on natural video end
+            video.addEventListener('ended', () => {
+                console.log(`[Video] Video ended for "${slideId}", looping to ${video._startAt}s`);
+                video.currentTime = video._startAt || 0;
+                video.play().catch(err => console.warn(`[Video] Loop play failed: ${err.message}`));
+            });
+
+            // Track recovery attempts to prevent infinite stall loops
+            let recoveryAttempts = 0;
+            const MAX_RECOVERY_ATTEMPTS = 2;
+
+            // Debug: Track video state changes
+            video.addEventListener('playing', () => {
+                console.log(`[Video] Playing: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
+                recoveryAttempts = 0;  // Reset on successful play
+            });
+            video.addEventListener('pause', () => {
+                console.log(`[Video] Paused: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
+            });
+            video.addEventListener('stalled', () => {
+                console.warn(`[Video] Stalled: "${slideId}" at ${video.currentTime.toFixed(1)}s (attempt ${recoveryAttempts}/${MAX_RECOVERY_ATTEMPTS})`);
+                // Only try recovery if slide is active and we haven't tried too many times
+                const slideEl = document.querySelector(`[data-id="${slideId}"]`);
+                if (slideEl?.classList.contains('active') && recoveryAttempts < MAX_RECOVERY_ATTEMPTS) {
+                    recoveryAttempts++;
+                    setTimeout(() => {
+                        console.log(`[Video] Recovery attempt ${recoveryAttempts}/${MAX_RECOVERY_ATTEMPTS} for "${slideId}"`);
+                        // Just try to play - don't reload which causes infinite loop
+                        video.play().catch(() => {});
+                    }, 2000);
+                }
+            });
+            video.addEventListener('waiting', () => {
+                console.log(`[Video] Buffering: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
+            });
+
+            // Track failed video paths per slide to avoid retry loops
+            if (!window._failedVideos) window._failedVideos = {};
+            if (!window._failedVideos[slideId]) window._failedVideos[slideId] = new Set();
+
+            // Handle errors gracefully - try to load alternate video
+            video.addEventListener('error', async (e) => {
+                const failedPath = video.querySelector('source')?.src;
+                console.warn(`[Video] Local video failed for "${slideId}": ${failedPath || 'unknown'}`);
+
+                // Track this failed video
+                if (failedPath) {
+                    window._failedVideos[slideId].add(failedPath);
+                }
+
+                // Report as played so server returns a different video next time
+                await reportVideoPlayed(slideId);
+
+                // Try to get another video if slide is still active
+                const slideEl = document.querySelector(`[data-id="${slideId}"]`);
+                if (slideEl?.classList.contains('active') && window._failedVideos[slideId].size < 3) {
+                    console.log(`[Video] Attempting fallback video for "${slideId}" (attempt ${window._failedVideos[slideId].size})`);
+
+                    // Remove failed video
+                    video.remove();
+                    delete localVideos[slideId];
+
+                    // Try to load another video
+                    const slideConfig = config.slides.find(s => s.id === slideId);
+                    const videoConfig = slideConfig?.video || {};
+                    await loadVideoForSlide(slideId, videoConfig);
+
+                    // Play the new video if loaded
+                    if (localVideos[slideId]) {
+                        playLocalVideo(slideId);
+                    }
+                } else {
+                    // Give up - remove video and show slide without it
+                    console.warn(`[Video] No more fallbacks for "${slideId}", showing slide without video`);
+                    video.remove();
+                    delete localVideos[slideId];
+                }
+            });
+
+            // Clear container and add video
+            containerParent.innerHTML = '';
+            containerParent.appendChild(video);
+
+            // Explicitly trigger load after adding to DOM
+            video.load();
+
+            // Store reference
+            localVideos[slideId] = video;
+            videoConfigs[slideId] = { videoConfig, containerId, isLocal: true };
+
+            console.log(`[Video] Video element added to DOM for "${slideId}"`);
+            return true;
+        }
+
+        // Play local video
+        function playLocalVideo(slideId) {
+            const video = localVideos[slideId];
+            if (!video) {
+                console.warn(`[Video] No video found for ${slideId} in localVideos`);
+                return;
+            }
+
+            console.log(`[Video] Attempting to play ${slideId}, readyState: ${video.readyState}, paused: ${video.paused}`);
+            video.muted = isMuted;
+
+            // If video isn't ready yet, wait for it
+            if (video.readyState < 3) {  // HAVE_FUTURE_DATA
+                console.log(`[Video] Video ${slideId} not ready (readyState: ${video.readyState}), waiting...`);
+                // Set up one-time handler for when video is ready
+                const playWhenReady = () => {
+                    video.removeEventListener('canplay', playWhenReady);
+                    // Verify slide is still active before playing
+                    const slideEl = document.querySelector(`[data-id="${slideId}"]`);
+                    if (slideEl?.classList.contains('active')) {
+                        video.play()
+                            .then(() => {
+                                console.log(`[Video] Delayed play started for ${slideId}`);
+                                reportVideoPlayed(slideId);
+                            })
+                            .catch(err => console.warn(`[Video] Delayed play failed: ${err.message}`));
+                    }
+                };
+                video.addEventListener('canplay', playWhenReady);
+                return;
+            }
+
+            // Video is ready, play immediately
+            video.play()
+                .then(() => {
+                    console.log(`[Video] Play started for ${slideId}`);
+                    reportVideoPlayed(slideId);
+                })
+                .catch(err => {
+                    console.warn(`[Video] Local video play failed for ${slideId}: ${err.message}`);
+                });
+        }
+
+        // Pause local video (keep loaded for quick resume)
+        function pauseLocalVideo(slideId) {
+            const video = localVideos[slideId];
+            if (video) {
+                video.pause();
+                // Don't aggressively clear src - just pause and let it buffer
+                // This keeps videos ready for quick resume
+            }
+        }
+
+        // Update mute state for all local videos
+        function updateLocalVideoMute() {
+            Object.values(localVideos).forEach(video => {
+                video.muted = isMuted;
+            });
+        }
+
+        // Pause all videos except the current one
+        function handleVideoOnSlideChange(newSlideId) {
+            Object.keys(localVideos).forEach(slideId => {
+                if (slideId === newSlideId) {
+                    playLocalVideo(slideId);
+                } else {
+                    pauseLocalVideo(slideId);
+                }
+            });
+        }
+
+        // Toggle mute for all videos
+        function toggleMute() {
+            isMuted = !isMuted;
+            updateLocalVideoMute();
+            updateMuteButton();
+        }
+
+        function updateMuteButton() {
+            const btn = document.getElementById('muteBtn');
+            if (btn) {
+                btn.textContent = isMuted ? '🔇 UNMUTE' : '🔊 MUTE';
+                btn.classList.toggle('unmuted', !isMuted);
+            }
+        }
+
+        // ============================================
+        // LAYOUT RENDERERS
+        // ============================================
+
+        function renderSimpleSlide(slide) {
+            const backgroundSrc = slide.background?.src || slide.featuredImage?.src || '';
+            const bgStyle = backgroundSrc ? `background-image: url('${escapeHtml(backgroundSrc)}')` : '';
+            const overlay = slide.background?.overlay || config.defaults?.overlay || 0.6;
+            const hasVideo = slide.video && typeof slide.video === 'object';
+            const videoContainerId = hasVideo ? `video-${slide.id}` : '';
+            const duration = slide.duration || config.defaults?.duration || 15000;
+            const titleText = slide.title || slide.quote || slide.id;
+            const subtitleText = slide.subtitle || slide.attribution || '';
+
+            return `
+                <div class="slide layout-simple mood-${escapeHtml(slide.mood)}"
+                     data-id="${escapeHtml(slide.id)}"
+                     data-video="${hasVideo ? 'true' : ''}"
+                     data-duration="${duration}"
+                     style="${bgStyle}; --overlay: ${overlay}">
+                    ${hasVideo ? `<div class="video-background"><div id="${videoContainerId}"></div></div>` : ''}
+                    <div class="slide-content">
+                        ${slide.category ? `<div class="slide-category">${escapeHtml(slide.category)}</div>` : ''}
+                        <h1 class="slide-title" ${slide.titleGradient ? `style="background: linear-gradient(135deg, ${slide.titleGradient.join(', ')}); -webkit-background-clip: text; background-clip: text;"` : ''}>${escapeHtml(titleText)}</h1>
+                        ${subtitleText ? `<p class="slide-subtitle">${escapeHtml(subtitleText)}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // MAIN RENDER FUNCTION
+        // ============================================
+
+        function renderSlide(slide) {
+            // Handle guest submission slides
+            if (slide.type === 'guest-submission') {
+                return renderGuestSlide(slide);
+            }
+
+            // Merge with defaults
+            const mergedSlide = {
+                ...config.defaults,
+                ...slide
+            };
+
+            // All default slides use the unified simple layout
+            return renderSimpleSlide(mergedSlide);
+        }
+
+        function renderGuestSlide(slide) {
+            const templateClass = slide.template === 'memory' ? 'memory-slide' : 'resolution-slide';
+            const duration = slide.duration || 25000;
+
+            return `
+                <div class="slide guest-submission ${templateClass}"
+                     id="slide-${escapeHtml(slide.id)}"
+                     data-id="${escapeHtml(slide.id)}"
+                     data-duration="${duration}">
+                    <div class="guest-slide-content">
+                        <img src="${escapeHtml(slide.background)}" class="theme-badge" alt="${escapeHtml(slide.template)}">
+                        <div class="guest-text-container">
+                            <p class="guest-text">"${escapeHtml(slide.text)}"</p>
+                            <p class="guest-name">— ${escapeHtml(slide.guestName)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAllSlides() {
+            const container = document.getElementById('slideshow');
+            const html = config.slides.map(renderSlide).join('');
+            container.innerHTML = html;
+
+            // Get fresh slide references
+            slides = document.querySelectorAll('.slide');
+
+            // Initialize video players for slides with videos
+            initializeVideoPlayers();
+        }
+
+        // Initialize video players - now handled on-demand in showSlide()
+        function initializeVideoPlayers() {
+            // Videos are loaded on-demand when each slide is shown
+            // This prevents loading all videos at once and improves performance
+            console.log('[Video] Video players will be loaded on-demand');
+        }
+
+        // ============================================
+        // SLIDESHOW CONTROLS
+        // ============================================
+
+        async function showSlide(index) {
+            // Guard against empty slides array to prevent NaN and crashes
+            if (!slides || slides.length === 0) {
+                console.warn('[Slideshow] No slides available');
+                return;
+            }
+            slides.forEach(slide => slide.classList.remove('active'));
+            currentSlide = (index + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            updateProgress();
+
+            const currentSlideId = slides[currentSlide].dataset.id;
+
+            // Get the slide config from YAML
+            const slideConfig = config.slides.find(s => s.id === currentSlideId);
+            // Default to enabling video - only skip if explicitly set to false
+            const videoConfig = slideConfig?.video !== false ? (slideConfig?.video || {}) : null;
+
+            // Load video if not explicitly disabled
+            if (videoConfig) {
+                await loadVideoForSlide(currentSlideId, videoConfig);
+            }
+
+            // Handle video playback on slide change
+            handleVideoOnSlideChange(currentSlideId);
+
+            // Reset and start countdown timer FIRST (sets slideStartTime)
+            resetCountdown();
+            if (!isPaused) {
+                startCountdown();
+                scheduleNextSlide();
+            }
+
+            // Report current slide to server AFTER timer is reset
+            // so slide_started_at reflects this slide, not the previous one
+            reportCurrentSlide();
+        }
+
+        // Check if a slide is hidden
+        function isSlideHidden(index) {
+            const slideEl = slides[index];
+            if (!slideEl) return false;
+            const slideId = slideEl.dataset.id;
+            return hiddenSlides.includes(slideId);
+        }
+
+        // Find next non-hidden slide index (wraps around)
+        function findNextVisibleSlide(startIndex, direction = 1) {
+            const totalSlides = slides.length;
+            let index = startIndex;
+            let checked = 0;
+
+            while (checked < totalSlides) {
+                index = (index + direction + totalSlides) % totalSlides;
+                if (!isSlideHidden(index)) {
+                    return index;
+                }
+                checked++;
+            }
+
+            // All slides hidden - return original (shouldn't happen)
+            console.warn('[Slideshow] All slides are hidden!');
+            return startIndex;
+        }
+
+        function nextSlide() {
+            const next = findNextVisibleSlide(currentSlide, 1);
+            showSlide(next);
+        }
+
+        function prevSlide() {
+            const prev = findNextVisibleSlide(currentSlide, -1);
+            showSlide(prev);
+        }
+
+        function updateProgress() {
+            const progressPercent = ((currentSlide + 1) / slides.length) * 100;
+            document.getElementById('progress').style.width = progressPercent + '%';
+        }
+
+        function getCurrentSlideDuration() {
+            const slideEl = slides[currentSlide];
+            return parseInt(slideEl?.dataset.duration) || 15000;
+        }
+
+        function scheduleNextSlide() {
+            stopAutoplay();
+            const duration = getCurrentSlideDuration();
+            autoplayInterval = setTimeout(() => {
+                if (!isPaused) {
+                    nextSlide();
+                }
+            }, duration);
+        }
+
+        function startAutoplay() {
+            scheduleNextSlide();
+        }
+
+        function stopAutoplay() {
+            clearTimeout(autoplayInterval);
+            clearInterval(autoplayInterval);
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const currentSlideId = slides[currentSlide]?.dataset.id;
+
+            if (isPaused) {
+                stopAutoplay();
+                pauseCountdown();
+                // Pause current video
+                if (currentSlideId) {
+                    pauseLocalVideo(currentSlideId);
+                }
+            } else {
+                // Resume video, slide timer, and countdown
+                if (currentSlideId) {
+                    playLocalVideo(currentSlideId);
+                }
+                resumeCountdown();
+                scheduleNextSlide();
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+
+        document.addEventListener('keydown', (e) => {
+            switch(e.code) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    if (!isPaused) {
+                        stopAutoplay();
+                        nextSlide();  // showSlide will reschedule
+                    }
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    if (!isPaused) {
+                        stopAutoplay();
+                        prevSlide();  // showSlide will reschedule
+                    }
+                    break;
+                case 'Space':
+                    e.preventDefault();
+                    togglePause();
+                    break;
+                case 'KeyF':
+                    toggleFullscreen();
+                    break;
+            }
+        });
+
+        document.getElementById('slideshow').addEventListener('click', (e) => {
+            if (e.target.classList.contains('fullscreen-btn')) return;
+            if (e.target.classList.contains('mute-btn')) return;
+            if (!isPaused) {
+                stopAutoplay();
+                nextSlide();  // showSlide will reschedule
+            }
+        });
+
+        // ============================================
+        // CURSOR ACTIVITY DETECTION (for controls hint)
+        // ============================================
+        let cursorTimeout = null;
+        const CURSOR_HIDE_DELAY = 3000;  // Hide controls after 3s of inactivity
+
+        function showControlsHint() {
+            document.querySelector('.controls-hint').classList.add('visible');
+            document.querySelector('.fullscreen-btn').classList.add('visible');
+            document.querySelector('.mute-btn').classList.add('visible');
+        }
+
+        function hideControlsHint() {
+            document.querySelector('.controls-hint').classList.remove('visible');
+            document.querySelector('.fullscreen-btn').classList.remove('visible');
+            document.querySelector('.mute-btn').classList.remove('visible');
+        }
+
+        function handleCursorActivity() {
+            showControlsHint();
+            if (cursorTimeout) clearTimeout(cursorTimeout);
+            cursorTimeout = setTimeout(hideControlsHint, CURSOR_HIDE_DELAY);
+        }
+
+        document.addEventListener('mousemove', handleCursorActivity);
+        document.addEventListener('mousedown', handleCursorActivity);
+        document.addEventListener('keydown', handleCursorActivity);
+
+        // ============================================
+        // INJECTED SLIDES (from approved guest submissions)
+        // ============================================
+        let lastInjectedCheck = 0;  // Timestamp of last check
+        let pendingPairSlide = null;  // Holds memory slide waiting for its resolution
+
+        async function checkForInjectedSlides() {
+            try {
+                const response = await fetch(`/api/injected-slides?since=${lastInjectedCheck}`);
+                if (!response.ok) {
+                    console.warn('[Injected] API returned non-ok status:', response.status);
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.slides && data.slides.length > 0) {
+                    console.log(`[Injected] Found ${data.slides.length} new slides, reloading full list`);
+                    // Reload full slide list to maintain server-authoritative ordering
+                    await reloadAllSlides();
+                    // Update timestamp + 1 to avoid re-fetching these slides (server uses >= comparison)
+                    const maxTimestamp = Math.max(...data.slides.map(s => s.injectedAt || 0));
+                    lastInjectedCheck = maxTimestamp + 1;
+                }
+            } catch (error) {
+                console.error('[Injected] Error checking for slides:', error);
+            }
+        }
+
+        async function reloadAllSlides() {
+            try {
+                const response = await fetch('/api/slideshow/slides');
+                if (!response.ok) return;
+
+                const data = await response.json();
+
+                // Preserve current slide position by ID
+                const currentSlideId = slides[currentSlide]?.dataset?.id;
+                const wasPlaying = !isPaused;
+
+                // Clear localVideos since DOM elements will be destroyed
+                // (video elements are removed when innerHTML is replaced)
+                Object.keys(localVideos).forEach(id => delete localVideos[id]);
+
+                // Update config and re-render
+                config.slides = data.slides;
+                renderAllSlides();
+
+                // Restore position by finding slide with same ID
+                if (currentSlideId) {
+                    let newIndex = config.slides.findIndex(s => s.id === currentSlideId);
+                    if (newIndex >= 0) {
+                        currentSlide = newIndex;
+
+                        // Check if restored slide is hidden - if so, move to next visible
+                        if (isSlideHidden(currentSlide)) {
+                            console.log(`[Reload] Current slide "${currentSlideId}" is hidden, finding next visible`);
+                            currentSlide = findNextVisibleSlide(currentSlide, 1);
+                        }
+
+                        // Update DOM to show correct slide
+                        slides.forEach(s => s.classList.remove('active'));
+                        slides[currentSlide]?.classList.add('active');
+
+                        // Reload video for the current slide
+                        const actualSlideId = slides[currentSlide]?.dataset?.id;
+                        const slideConfig = config.slides.find(s => s.id === actualSlideId);
+                        const videoConfig = slideConfig?.video !== false ? (slideConfig?.video || {}) : null;
+                        if (videoConfig && actualSlideId) {
+                            await loadVideoForSlide(actualSlideId, videoConfig);
+                            handleVideoOnSlideChange(actualSlideId);
+                        }
+                    }
+                }
+
+                console.log(`[Reload] Loaded ${data.slides.length} slides (${data.injected_count} injected)`);
+            } catch (error) {
+                console.error('[Reload] Failed to reload slides:', error);
+            }
+        }
+
+        // Check if a slide is an injected guest submission
+        function isInjectedSlide(slide) {
+            return slide?.type === 'guest-submission';
+        }
+
+        // Find a valid position to insert a pair of slides
+        // Rules: must not be adjacent to another injected pair
+        function findValidInsertPosition() {
+            const validPositions = [];
+
+            for (let i = 0; i <= config.slides.length; i++) {
+                const beforeSlide = i > 0 ? config.slides[i - 1] : null;
+                const afterSlide = i < config.slides.length ? config.slides[i] : null;
+
+                // Position is valid if neighbors are default slides (or boundaries)
+                const beforeOk = !beforeSlide || !isInjectedSlide(beforeSlide);
+                const afterOk = !afterSlide || !isInjectedSlide(afterSlide);
+
+                if (beforeOk && afterOk) {
+                    validPositions.push(i);
+                }
+            }
+
+            if (validPositions.length === 0) {
+                // Fallback: append at end (shouldn't happen with proper spacing)
+                console.warn('[Injected] No valid positions found, appending at end');
+                return config.slides.length;
+            }
+
+            // Strategy: spread slides evenly by targeting ~1/3 through the slideshow
+            // This distributes guest content throughout the presentation
+            const targetPos = Math.floor(config.slides.length / 3);
+            const bestPos = validPositions.reduce((best, pos) =>
+                Math.abs(pos - targetPos) < Math.abs(best - targetPos) ? pos : best
+            );
+
+            console.log(`[Injected] Valid positions: [${validPositions.join(', ')}], choosing ${bestPos}`);
+            return bestPos;
+        }
+
+        // Insert a single slide at a specific position
+        function insertSlideAtPosition(slideData, index) {
+            // Insert into config.slides array
+            config.slides.splice(index, 0, slideData);
+
+            // Create DOM element
+            const slideEl = createGuestSlideElement(slideData);
+
+            // Insert into DOM at correct position
+            const container = document.getElementById('slideshow');
+            const referenceEl = container.children[index];
+
+            if (referenceEl) {
+                container.insertBefore(slideEl, referenceEl);
+            } else {
+                container.appendChild(slideEl);
+            }
+
+            // Update slides NodeList
+            slides = document.querySelectorAll('.slide');
+
+            // Adjust currentSlide index if insertion was before current position
+            if (index <= currentSlide) {
+                currentSlide++;
+            }
+
+            console.log(`[Injected] Inserted ${slideData.id} at position ${index}`);
+        }
+
+        function injectGuestSlide(slideData) {
+            // Avoid duplicates
+            if (config.slides.find(s => s.id === slideData.id)) {
+                console.log(`[Injected] Slide ${slideData.id} already exists, skipping`);
+                return;
+            }
+
+            // Handle pair insertion: memory and resolution must be consecutive
+            if (slideData.template === 'memory') {
+                // Memory comes first - save and wait for resolution
+                pendingPairSlide = slideData;
+                console.log(`[Injected] Holding memory slide, waiting for resolution`);
+                return;
+            }
+
+            if (slideData.template === 'resolution' && pendingPairSlide) {
+                // Resolution completes the pair - insert both together
+                const memorySlide = pendingPairSlide;
+                pendingPairSlide = null;
+
+                const insertIndex = findValidInsertPosition();
+
+                // Insert memory first, then resolution right after
+                insertSlideAtPosition(memorySlide, insertIndex);
+                insertSlideAtPosition(slideData, insertIndex + 1);
+
+                console.log(`[Injected] Pair inserted: ${memorySlide.id} + ${slideData.id} at positions ${insertIndex}, ${insertIndex + 1}`);
+                return;
+            }
+
+            // Fallback for orphan slides (shouldn't happen normally)
+            console.warn(`[Injected] Orphan slide: ${slideData.id}`);
+            const insertIndex = findValidInsertPosition();
+            insertSlideAtPosition(slideData, insertIndex);
+        }
+
+        function createGuestSlideElement(slideData) {
+            const slide = document.createElement('div');
+            // Add template-specific class for theming (memory-slide or resolution-slide)
+            const templateClass = slideData.template === 'memory' ? 'memory-slide' : 'resolution-slide';
+            slide.className = `slide guest-submission ${templateClass}`;
+            slide.id = `slide-${escapeHtml(slideData.id)}`;
+            slide.dataset.id = slideData.id;
+            slide.dataset.duration = slideData.duration || 25000;
+
+            slide.innerHTML = `
+                <div class="guest-slide-content">
+                    <img src="${escapeHtml(slideData.background)}" class="theme-badge" alt="${escapeHtml(slideData.template)}">
+                    <div class="guest-text-container">
+                        <p class="guest-text">"${escapeHtml(slideData.text)}"</p>
+                        <p class="guest-name">— ${escapeHtml(slideData.guestName)}</p>
+                    </div>
+                </div>
+            `;
+
+            return slide;
+        }
+
+        // ============================================
+        // REMOTE CONTROL POLLING
+        // ============================================
+        let remoteControlEnabled = true;
+        let lastRemoteState = null;
+        let remotePollingInterval = null;
+        // Get polling interval from config (with fallback)
+        function getRemotePollInterval() {
+            return appConfig?.polling?.slideshow_state || 2000;
+        }
+
+        async function pollRemoteState() {
+            if (!remoteControlEnabled) return;
+
+            try {
+                const response = await fetch('/api/slideshow/state');
+                if (!response.ok) return;
+
+                const state = await response.json();
+
+                // Check if this is first poll or state changed
+                if (lastRemoteState) {
+                    // Handle pause/resume from remote
+                    if (state.is_paused !== lastRemoteState.is_paused) {
+                        if (state.is_paused && !isPaused) {
+                            console.log('[Remote] Pause command received');
+                            togglePause();
+                        } else if (!state.is_paused && isPaused) {
+                            console.log('[Remote] Resume command received');
+                            togglePause();
+                        }
+                    }
+
+                    // Handle slide navigation from remote
+                    if (state.current_slide_index !== lastRemoteState.current_slide_index) {
+                        const targetIndex = state.current_slide_index;
+                        if (targetIndex !== currentSlide && targetIndex >= 0 && targetIndex < slides.length) {
+                            console.log(`[Remote] Jump to slide ${targetIndex}`);
+                            stopAutoplay();
+                            showSlide(targetIndex);
+                        }
+                    }
+
+                    // Handle video switch request from remote
+                    if (state.request_video_switch && !lastRemoteState.request_video_switch) {
+                        console.log('[Remote] Video switch requested');
+                        await handleVideoSwitch();
+                    }
+
+                    // Update hidden slides list if changed
+                    const newHidden = state.hidden_slides || [];
+                    if (JSON.stringify(newHidden) !== JSON.stringify(hiddenSlides)) {
+                        const wasHidden = [...hiddenSlides];
+                        hiddenSlides = newHidden;
+                        console.log(`[Remote] Hidden slides updated: ${hiddenSlides.length} hidden`);
+
+                        // If current slide was just hidden, move to next visible slide
+                        const currentSlideId = slides[currentSlide]?.dataset?.id;
+                        if (currentSlideId && hiddenSlides.includes(currentSlideId) && !wasHidden.includes(currentSlideId)) {
+                            console.log(`[Remote] Current slide "${currentSlideId}" was hidden, moving to next`);
+                            const nextVisible = findNextVisibleSlide(currentSlide, 1);
+                            if (nextVisible !== currentSlide) {
+                                showSlide(nextVisible);
+                            }
+                        }
+                    }
+
+                    // Handle mute/unmute from remote
+                    if (state.is_muted !== undefined && state.is_muted !== isMuted) {
+                        console.log(`[Remote] ${state.is_muted ? 'Mute' : 'Unmute'} command received`);
+                        isMuted = state.is_muted;
+                        updateLocalVideoMute();
+                        updateMuteButton();
+                    }
+                }
+
+                lastRemoteState = state;
+
+                // Also check for injected slides from approved submissions
+                await checkForInjectedSlides();
+            } catch (error) {
+                // Silent fail - don't spam console
+            }
+        }
+
+        async function reportCurrentSlide() {
+            if (!remoteControlEnabled) return;
+
+            try {
+                const slideEl = slides[currentSlide];
+                const slideId = slideEl?.dataset.id || '';
+                const duration = getCurrentSlideDuration();
+
+                const syncData = {
+                    slide_id: slideId,
+                    slide_index: currentSlide,
+                    slide_duration: duration,
+                    slide_started_at: new Date(slideStartTime).toISOString(),
+                    total_slides: slides.length  // Include actual total with injected slides
+                };
+
+                await fetch('/api/slideshow/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(syncData)
+                });
+
+                // Update lastRemoteState to prevent re-triggering on next poll
+                if (lastRemoteState) {
+                    lastRemoteState.current_slide_index = currentSlide;
+                    lastRemoteState.current_slide = slideId;
+                }
+            } catch (error) {
+                // Silent fail
+            }
+        }
+
+        function startRemotePolling() {
+            if (remotePollingInterval) return;
+            remotePollingInterval = setInterval(pollRemoteState, getRemotePollInterval());
+            console.log('[Remote] Remote control polling started');
+        }
+
+        function stopRemotePolling() {
+            if (remotePollingInterval) {
+                clearInterval(remotePollingInterval);
+                remotePollingInterval = null;
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        async function init() {
+            try {
+                // Load app configuration first (for polling intervals, timeouts, etc.)
+                await loadAppConfig();
+
+                // Load YAML configuration for meta and defaults
+                const yamlResponse = await fetch('slideshow.yaml');
+                const yamlText = await yamlResponse.text();
+                config = jsyaml.load(yamlText);
+
+                // Update page title
+                if (config.meta?.title) {
+                    document.title = config.meta.title;
+                }
+
+                // Fetch complete slide list from server (includes injected slides in correct order)
+                // This ensures slideshow and admin table of contents have matching order
+                try {
+                    const slidesResponse = await fetch('/api/slideshow/slides');
+                    if (slidesResponse.ok) {
+                        const slidesData = await slidesResponse.json();
+                        config.slides = slidesData.slides;
+                        console.log(`[Init] Loaded ${slidesData.slides.length} slides from API (${slidesData.injected_count} injected)`);
+
+                        // Set lastInjectedCheck to max timestamp + 1 so polling only gets truly NEW slides
+                        // (Server uses >= comparison, so we add 1 to avoid re-matching same slides)
+                        const injectedSlides = slidesData.slides.filter(s => s.injectedAt);
+                        if (injectedSlides.length > 0) {
+                            lastInjectedCheck = Math.max(...injectedSlides.map(s => s.injectedAt)) + 1;
+                            console.log(`[Init] Set lastInjectedCheck to ${lastInjectedCheck}`);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[Init] Could not fetch slides from API, using yaml only:', e);
+                }
+
+                // Fetch initial state (hidden slides, mute state)
+                try {
+                    const stateResponse = await fetch('/api/slideshow/state');
+                    if (stateResponse.ok) {
+                        const state = await stateResponse.json();
+                        hiddenSlides = state.hidden_slides || [];
+                        if (hiddenSlides.length > 0) {
+                            console.log(`[Init] ${hiddenSlides.length} slides are hidden`);
+                        }
+                        // Sync initial mute state from server
+                        if (state.is_muted !== undefined) {
+                            isMuted = state.is_muted;
+                            updateMuteButton();
+                            console.log(`[Init] Mute state: ${isMuted ? 'muted' : 'unmuted'}`);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[Init] Could not fetch slideshow state:', e);
+                }
+
+                // Render slides
+                renderAllSlides();
+
+                // Hide loading screen
+                document.getElementById('loading').classList.add('hidden');
+
+                // Small delay to allow video players to initialize, then start
+                setTimeout(() => {
+                    // Show first slide (this handles video playback and timer)
+                    showSlide(0);
+
+                    // Start remote control polling
+                    startRemotePolling();
+                }, 500);
+
+            } catch (error) {
+                console.error('Failed to load slideshow:', error);
+                document.getElementById('loading').textContent = 'Error loading slideshow. Check console.';
+            }
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>

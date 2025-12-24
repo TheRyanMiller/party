@@ -1,0 +1,296 @@
+# NYE Slideshow Config
+# --------------------
+# Minimal per-slide keys:
+#   id: unique-slide-id
+#   title: TEXT
+#   mood: warm|cool|dark|neon|retro|meme|golden   # sets gradients
+#   video: {} or per-file config (see below)
+# Optional:
+#   layout: hero|standard|meme|quote|split        # all render as simple layout now
+#   category: LABEL                               # small label above title
+#   background: { type: image, src: path, overlay: 0.0-1.0 }
+# Per-video overrides (file-specific inside video:):
+#   <filename>.mp4:
+#     start: 5            # start time in seconds (end also supported)
+#     end: 60
+#     resize:             # optional zoom to better fill screen
+#       mode: zoom        # zoom or cover/contain (cover is default behavior)
+#       scale: 1.2        # zoom strength; 1.0 = no extra zoom
+
+meta:
+  title: 2016 - What A Year
+  transition: 1200
+  loop: true
+defaults:
+  layout: standard
+  mood: warm
+  overlay: 0.4
+  titleSize: normal
+  duration: 30000
+slides:
+- id: intro
+  layout: hero
+  mood: warm
+  category: Remember
+  title: '2016'
+  titleSize: huge
+  background:
+    type: gradient
+    colors:
+    - '#1a1a2e'
+    - '#16213e'
+    - '#0f3460'
+- id: one-dance
+  layout: standard
+  mood: warm
+  emoji: 🎵
+  category: The Soundtrack
+  title: ONE DANCE
+  video: {}
+- id: lemonade
+  layout: standard
+  mood: warm
+  emoji: 🍋
+  title: LEMONADE
+  video: {}
+- id: closer
+  layout: standard
+  mood: warm
+  emoji: 🎤
+  title: CLOSER
+  video: {}
+- id: rihanna-work
+  layout: quote
+  mood: warm
+  quote: work work work work work
+  attribution: — Rihanna, 2016
+  video: {}
+- id: panda
+  layout: standard
+  mood: warm
+  emoji: 🐼
+  title: PANDA
+  video:
+    E5ONTXHS2mM_0-60.mp4:
+      start: 5
+      resize:
+        mode: zoom
+        scale: 1.5
+- id: damn-daniel
+  layout: standard
+  mood: meme
+  category: Viral Moment
+  title: DAMN DANIEL
+  video: {}
+- id: harambe
+  layout: standard
+  mood: meme
+  category: Never Forget
+  title: HARAMBE
+  video: {}
+- id: evil-kermit
+  layout: meme
+  mood: meme
+  category: Inner Me vs Me
+  title: EVIL KERMIT
+  featuredImage:
+    src: images/evil-kermit.jpg
+    alt: Evil Kermit meme
+- id: arthur-fist
+  layout: meme
+  mood: meme
+  category: When you're mad but
+  title: ARTHUR FIST
+  featuredImage:
+    src: images/arthur-fist.jpg
+    alt: Arthur's Fist meme
+- id: chewbacca-mom
+  layout: standard
+  mood: meme
+  emoji: 😂
+  category: Viral Joy
+  title: CHEWBACCA MOM
+  video: {}
+- id: bottle-flip
+  layout: standard
+  mood: meme
+  emoji: 🍼
+  category: Talent Show
+  title: BOTTLE FLIP
+  video: {}
+- id: crying-jordan
+  layout: meme
+  mood: meme
+  category: When Your Team Loses
+  title: CRYING JORDAN
+  featuredImage:
+    src: images/crying-jordan.png
+    alt: Crying Jordan meme
+- id: running-man
+  layout: standard
+  mood: meme
+  emoji: 🏃
+  category: Dance Craze
+  title: RUNNING MAN
+  video: {}
+- id: mannequin-challenge
+  layout: standard
+  mood: cool
+  emoji: 🧍
+  category: Don't Move
+  title: MANNEQUIN CHALLENGE
+  video: {}
+- id: pokemon-go
+  layout: standard
+  mood: retro
+  emoji: 📱
+  category: The Summer Of
+  title: KATIE LOVES POKEMON GO
+  video:
+    2sj2iQyBTQs_0-60.mp4:
+      start: 15
+- id: stranger-things
+  layout: standard
+  mood: retro
+  emoji: 🔦
+  category: Netflix & Chill
+  title: STRANGER THINGS
+  video: {}
+- id: hamilton
+  layout: standard
+  mood: warm
+  emoji: 🎭
+  category: Broadway
+  title: HAMILTON
+  video:
+    hamilton-grammys-fallback_WNFf7nMIGnE_full.mp4:
+      start: 15
+- id: carpool-karaoke
+  layout: quote
+  mood: warm
+  quote: Hello from the other siiiiiide
+  attribution: — Adele, in a car, 2016
+  video: {}
+- id: deadpool
+  layout: standard
+  mood: neon
+  emoji: 🎬
+  category: At The Movies
+  title: DEADPOOL
+  video: {}
+- id: la-la-land
+  layout: quote
+  mood: neon
+  quote: City of stars, are you shining just for me?
+  attribution: — La La Land, 2016
+  video: {}
+- id: finding-dory
+  layout: standard
+  mood: cool
+  emoji: 🐠
+  title: FINDING DORY
+  video: {}
+- id: cubs-win
+  layout: standard
+  mood: golden
+  emoji: ⚾
+  category: 108 Years Later
+  title: CUBS WIN
+  video: {}
+- id: cavs-comeback
+  layout: standard
+  mood: golden
+  emoji: 🏀
+  category: 3-1 Lead
+  title: CLEVELAND
+  video: {}
+- id: kobe-finale
+  layout: standard
+  mood: golden
+  emoji: 🐍
+  category: Mamba Out
+  title: KOBE
+- id: kaepernick
+  layout: standard
+  mood: dark
+  emoji: 🏈
+  category: Taking A Knee
+  title: KAEPERNICK
+  video: {}
+- id: olympics
+  layout: standard
+  mood: cool
+  emoji: 🏅
+  category: Rio 2016
+  title: OLYMPICS
+  video: {}
+- id: leo-wins
+  layout: standard
+  mood: golden
+  emoji: 🏆
+  category: Finally
+  title: LEO WINS
+  video: {}
+- id: rip-vine
+  layout: standard
+  mood: dark
+  emoji: 📹
+  category: Gone But Not Forgotten
+  title: RIP VINE
+  video: {}
+- id: rip-bowie
+  layout: standard
+  mood: dark
+  emoji: ⚡
+  category: RIP 2016
+  title: DAVID BOWIE
+  titleGradient:
+  - '#888'
+  - '#fff'
+  video: {}
+- id: rip-prince
+  layout: standard
+  mood: dark
+  emoji: 💜
+  category: RIP 2016
+  title: PRINCE
+  titleGradient:
+  - '#9b59b6'
+  - '#fff'
+  video: {}
+- id: headphone-jack
+  layout: standard
+  mood: cool
+  emoji: 📱
+  category: Controversy
+  title: NO HEADPHONE JACK
+  video: {}
+- id: note-7
+  layout: standard
+  mood: neon
+  emoji: 💥
+  category: Recall
+  title: NOTE 7
+- id: spacex-landing
+  layout: standard
+  mood: cool
+  emoji: 🚀
+  category: The Future
+  title: SPACEX
+  video: {}
+- id: election
+  layout: standard
+  mood: cool
+  emoji: 🗳️
+  category: Democracy
+  title: Presidential Election
+  video:
+    VvwtdqeFuzc_25235-25295.mp4:
+      start: 14
+- id: finale
+  layout: hero
+  mood: golden
+  category: Welcome Back To
+  title: '2016'
+  titleSize: large
+  video: {}

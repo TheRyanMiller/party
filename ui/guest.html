@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥳</text></svg>">
+    <title>Share Your Memories - NYE 2025</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #fff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff6b6b);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .form-group label .required {
+            color: #ff6b6b;
+            margin-left: 4px;
+            font-size: 0.9em;
+        }
+
+        .form-group textarea,
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transition: all 0.3s;
+            resize: none;
+        }
+
+        .form-group textarea::placeholder,
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group textarea:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #feca57;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group textarea {
+            height: 100px;
+        }
+
+        .form-group.name input {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Anonymous toggle */
+        .anonymous-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 28px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        .toggle-label {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .name-input-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.3s ease;
+            margin-top: 0;
+        }
+
+        .name-input-wrapper.visible {
+            max-height: 80px;
+            opacity: 1;
+            margin-top: 15px;
+        }
+
+        .name-input-wrapper input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .name-input-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .name-input-wrapper input:focus {
+            outline: none;
+            border-color: #feca57;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 8px;
+            opacity: 0.5;
+            font-size: 13px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(254, 202, 87, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success State */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-message .checkmark {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(90deg, #1dd1a1, #10ac84);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 40px;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-message h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .success-message p {
+            opacity: 0.8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .success-message button {
+            padding: 15px 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: transparent;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .success-message button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Error State */
+        .error-message {
+            background: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .form-content {
+            display: block;
+        }
+
+        .form-content.hidden {
+            display: none;
+        }
+
+        /* Decorative elements */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .sparkle-1 { top: 10%; left: 10%; font-size: 20px; animation: float 3s ease-in-out infinite; }
+        .sparkle-2 { top: 20%; right: 15%; font-size: 16px; animation: float 4s ease-in-out infinite 0.5s; }
+        .sparkle-3 { bottom: 30%; left: 8%; font-size: 24px; animation: float 3.5s ease-in-out infinite 1s; }
+        .sparkle-4 { bottom: 15%; right: 10%; font-size: 18px; animation: float 4.5s ease-in-out infinite 1.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        /* Character count */
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            opacity: 0.5;
+            margin-top: 5px;
+        }
+
+        .char-count.warn {
+            color: #feca57;
+            opacity: 1;
+        }
+
+        .char-count.limit {
+            color: #ff6b6b;
+            opacity: 1;
+        }
+
+        /* ============================================
+           INTRO ANIMATION STYLES
+           ============================================ */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            overflow: hidden;
+        }
+
+        .intro-overlay.fade-out {
+            animation: introFadeOut 0.8s ease-out forwards;
+        }
+
+        @keyframes introFadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
+        }
+
+        .intro-overlay.hidden {
+            display: none;
+        }
+
+        .intro-content {
+            text-align: center;
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro-line {
+            margin-bottom: 15px;
+        }
+
+        .intro-line-1 {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .intro-line-2 {
+            font-size: clamp(2rem, 7vw, 3.5rem);
+            font-weight: 700;
+        }
+
+        .intro-line-2 .intro-word {
+            color: #f5576c;
+            padding: 0 5px;
+        }
+
+        .intro-line-2 .intro-word:nth-child(1) { color: #f093fb; }
+        .intro-line-2 .intro-word:nth-child(2) { color: #feca57; }
+        .intro-line-2 .intro-word:nth-child(3) { color: #4facfe; }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .intro-line-3 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .intro-line-3 .intro-word {
+            color: #feca57;
+            padding: 0 3px;
+        }
+
+        .intro-line-3 .intro-word:nth-child(1) { color: #feca57; } /* 🎉 */
+        .intro-line-3 .intro-word:nth-child(2) { color: #ff6b6b; } /* 2016 (2026) */
+        .intro-line-3 .intro-word:nth-child(3) { color: #48dbfb; } /* New Year's Eve Party! */
+        .intro-line-3 .intro-word:nth-child(4) { color: #feca57; } /* 🎉 */
+
+        .intro-line-4 {
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        .intro-line-5 {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        .intro-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px);
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Glowing orbs background */
+        .intro-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: orbPulse 4s ease-in-out infinite;
+        }
+
+        .intro-orb-1 {
+            width: 300px;
+            height: 300px;
+            background: #f093fb;
+            top: -100px;
+            left: -100px;
+        }
+
+        .intro-orb-2 {
+            width: 250px;
+            height: 250px;
+            background: #4facfe;
+            bottom: -80px;
+            right: -80px;
+            animation-delay: 1s;
+        }
+
+        .intro-orb-3 {
+            width: 200px;
+            height: 200px;
+            background: #feca57;
+            top: 50%;
+            right: -50px;
+            animation-delay: 2s;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        .intro-skip {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: skipFadeIn 0.5s ease 2s forwards;
+        }
+
+        .intro-skip:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .intro-skip.ready {
+            padding: 16px 45px;
+            background: linear-gradient(135deg, rgba(254,202,87,0.3), rgba(255,107,107,0.3));
+            border: 2px solid rgba(254,202,87,0.6);
+            color: #feca57;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .intro-skip.ready:hover {
+            background: linear-gradient(135deg, rgba(254,202,87,0.5), rgba(255,107,107,0.5));
+            border-color: rgba(254,202,87,0.9);
+            color: #fff;
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        @keyframes skipFadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .intro-year {
+            display: inline-block;
+            padding: 8px 25px;
+            background: linear-gradient(135deg, rgba(255,107,107,0.2), rgba(254,202,87,0.2));
+            border: 1px solid rgba(254,202,87,0.3);
+            border-radius: 30px;
+            margin-bottom: 25px;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            letter-spacing: 0.2em;
+            color: #feca57;
+            opacity: 0;
+        }
+
+        /* Floating particles */
+        .intro-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- INTRO ANIMATION OVERLAY -->
+    <div id="introOverlay" class="intro-overlay">
+        <div class="intro-orb intro-orb-1"></div>
+        <div class="intro-orb intro-orb-2"></div>
+        <div class="intro-orb intro-orb-3"></div>
+
+        <div class="intro-content">
+            <div id="introYear" class="intro-year">🎊 NEW YEAR'S EVE 🎊</div>
+
+            <div class="intro-line intro-line-1">
+                <span class="intro-word">✨ Welcome to ✨</span>
+            </div>
+
+            <div class="intro-line intro-line-2">
+                <span class="intro-word">Carrah</span>
+                <span class="intro-word">&</span>
+                <span class="intro-word">Ryan's</span>
+            </div>
+
+            <div class="intro-line intro-line-3">
+                <span class="intro-word">🎉</span>
+                <span class="intro-word">2016 (2026)</span>
+                <span class="intro-word">New Year's Eve Party!</span>
+                <span class="intro-word">🎉</span>
+            </div>
+
+            <div class="intro-line intro-line-4">
+                <span class="intro-word">We are so happy</span>
+                <span class="intro-word">you could join us 🥳</span>
+            </div>
+
+            <div class="intro-line intro-line-5">
+                <span class="intro-word">Please take a moment to</span>
+                <span class="intro-word">fill out these questions 📝</span>
+            </div>
+        </div>
+
+        <button class="intro-skip" onclick="skipIntro()">skip intro</button>
+    </div>
+
+    <div class="sparkle sparkle-1">*</div>
+    <div class="sparkle sparkle-2">*</div>
+    <div class="sparkle sparkle-3">*</div>
+    <div class="sparkle sparkle-4">*</div>
+
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>NYE 2016</h1>
+                <p id="headerSubtitle">Share your reflections with the party!</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <div id="formContent" class="form-content">
+                <div class="form-group">
+                    <label>
+                        What's your best memory from 2025?<span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="memory"
+                        placeholder="That time when..."
+                        maxlength="500"
+                        oninput="updateCharCount(this, 'memoryCount')"
+                    ></textarea>
+                    <div id="memoryCount" class="char-count">0 / 500</div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        What's your 2026 New Year's resolution?<span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="resolution"
+                        placeholder="This year I will..."
+                        maxlength="500"
+                        oninput="updateCharCount(this, 'resolutionCount')"
+                    ></textarea>
+                    <div id="resolutionCount" class="char-count">0 / 500</div>
+                </div>
+
+                <div class="anonymous-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="anonymousToggle" checked onchange="toggleNameInput()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" onclick="document.getElementById('anonymousToggle').click()">Submit anonymously</span>
+                </div>
+                <div id="nameInputWrapper" class="name-input-wrapper">
+                    <input
+                        type="text"
+                        id="guestName"
+                        placeholder="Your name"
+                        maxlength="100"
+                    >
+                </div>
+
+                <button id="submitBtn" class="submit-btn" onclick="submitForm()">
+                    Submit
+                </button>
+            </div>
+
+            <div id="successMessage" class="success-message">
+                <div class="checkmark">*</div>
+                <h2>HAPPY NEW YEAR!</h2>
+                <p>Your submission has been received and is pending review. Once approved, it may appear in the slideshow!</p>
+                <button onclick="resetForm()">Submit Another</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- canvas-confetti library for celebration effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <!-- anime.js for smooth intro animations -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+
+    <script>
+        // ============================================
+        // INTRO ANIMATION
+        // ============================================
+        let introTimeline = null;
+        let introComplete = false;
+
+        function runIntroAnimation() {
+            const overlay = document.getElementById('introOverlay');
+            if (!overlay) return;
+
+            // Create floating particles
+            createParticles();
+
+            // Build animation timeline - longer duration for reading
+            introTimeline = anime.timeline({
+                easing: 'easeOutExpo',
+                complete: () => {
+                    // Transform skip button to prominent dismiss button
+                    showDismissButton();
+                }
+            });
+
+            // Year badge fades in
+            introTimeline.add({
+                targets: '#introYear',
+                opacity: [0, 1],
+                scale: [0.8, 1],
+                duration: 800,
+                easing: 'easeOutBack'
+            });
+
+            // Line 1: "Welcome to"
+            introTimeline.add({
+                targets: '.intro-line-1 .intro-word',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 700,
+                delay: anime.stagger(100)
+            }, '-=200');
+
+            // Pause for emphasis
+            introTimeline.add({ duration: 300 });
+
+            // Line 2: "Carrah & Ryan's" - the star of the show
+            introTimeline.add({
+                targets: '.intro-line-2 .intro-word',
+                opacity: [0, 1],
+                translateY: [40, 0],
+                scale: [0.8, 1],
+                duration: 900,
+                delay: anime.stagger(180),
+                easing: 'easeOutBack'
+            });
+
+            // Pause to admire the names
+            introTimeline.add({ duration: 400 });
+
+            // Line 3: "2016 New Year's Eve Party!"
+            introTimeline.add({
+                targets: '.intro-line-3 .intro-word',
+                opacity: [0, 1],
+                translateY: [25, 0],
+                duration: 600,
+                delay: anime.stagger(80)
+            });
+
+            // Fire confetti after the party line
+            introTimeline.add({
+                duration: 200,
+                complete: () => fireIntroConfetti()
+            });
+
+            // Pause after the excitement
+            introTimeline.add({ duration: 600 });
+
+            // Line 4: "We are so happy you could join us..."
+            introTimeline.add({
+                targets: '.intro-line-4 .intro-word',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 600,
+                delay: anime.stagger(80)
+            });
+
+            // Pause
+            introTimeline.add({ duration: 400 });
+
+            // Line 5: "Please take a moment..."
+            introTimeline.add({
+                targets: '.intro-line-5 .intro-word',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 500,
+                delay: anime.stagger(60)
+            });
+        }
+
+        function createParticles() {
+            const overlay = document.getElementById('introOverlay');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'intro-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                overlay.appendChild(particle);
+
+                // Animate each particle
+                anime({
+                    targets: particle,
+                    opacity: [0, 0.6, 0],
+                    scale: [0, 1.5, 0],
+                    translateY: [0, -100 - Math.random() * 100],
+                    duration: 3000 + Math.random() * 2000,
+                    delay: Math.random() * 2000,
+                    easing: 'easeOutQuad',
+                    loop: true
+                });
+            }
+        }
+
+        function fireIntroConfetti() {
+            if (typeof confetti === 'undefined') return;
+
+            const colors = ['#f093fb', '#f5576c', '#feca57', '#4facfe', '#1dd1a1', '#fff'];
+
+            // Center burst
+            confetti({
+                particleCount: 80,
+                spread: 100,
+                origin: { y: 0.5 },
+                colors: colors,
+                startVelocity: 45
+            });
+
+            // Side bursts
+            setTimeout(() => {
+                confetti({
+                    particleCount: 40,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0, y: 0.5 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 40,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1, y: 0.5 },
+                    colors: colors
+                });
+            }, 200);
+        }
+
+        function endIntro() {
+            if (introComplete) return;
+            introComplete = true;
+
+            const overlay = document.getElementById('introOverlay');
+            overlay.classList.add('fade-out');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 800);
+        }
+
+        function skipIntro() {
+            if (introTimeline) {
+                introTimeline.pause();
+            }
+            endIntro();
+        }
+
+        function showDismissButton() {
+            const btn = document.querySelector('.intro-skip');
+            if (!btn) return;
+
+            // Change button text and style
+            btn.textContent = "Let's Go!";
+            btn.classList.add('ready');
+
+            // Animate the button to draw attention
+            anime({
+                targets: btn,
+                scale: [1, 1.1, 1],
+                duration: 600,
+                easing: 'easeOutBack'
+            });
+        }
+
+        // Start intro animation on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Small delay to ensure everything is loaded
+            setTimeout(runIntroAnimation, 100);
+        });
+
+        // ============================================
+        // CONFETTI & FORM FUNCTIONS
+        // ============================================
+
+        // Confetti celebration effect
+        function fireConfetti() {
+            // Fire from both sides for a festive effect
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#fff'];
+
+            (function frame() {
+                // Left side burst
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.6 },
+                    colors: colors
+                });
+
+                // Right side burst
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.6 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // Also fire a big center burst
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: colors
+            });
+        }
+
+        function toggleNameInput() {
+            const toggle = document.getElementById('anonymousToggle');
+            const wrapper = document.getElementById('nameInputWrapper');
+            const nameInput = document.getElementById('guestName');
+
+            if (toggle.checked) {
+                // Anonymous mode - hide name input
+                wrapper.classList.remove('visible');
+                nameInput.value = '';
+            } else {
+                // Show name input
+                wrapper.classList.add('visible');
+                setTimeout(() => nameInput.focus(), 300);
+            }
+        }
+
+        function updateCharCount(textarea, countId) {
+            const count = textarea.value.length;
+            const max = parseInt(textarea.maxLength);
+            const countEl = document.getElementById(countId);
+
+            countEl.textContent = `${count} / ${max}`;
+
+            if (count >= max) {
+                countEl.className = 'char-count limit';
+            } else if (count >= max * 0.8) {
+                countEl.className = 'char-count warn';
+            } else {
+                countEl.className = 'char-count';
+            }
+        }
+
+        async function submitForm() {
+            const memory = document.getElementById('memory').value.trim();
+            const resolution = document.getElementById('resolution').value.trim();
+            const guestName = document.getElementById('guestName').value.trim();
+            const errorEl = document.getElementById('errorMessage');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Validation
+            if (!memory) {
+                showError('Please share your favorite 2025 memory');
+                return;
+            }
+
+            if (!resolution) {
+                showError('Please share your 2026 resolution');
+                return;
+            }
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const res = await fetch('/api/submissions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        memory,
+                        resolution,
+                        guest_name: guestName || null
+                    })
+                });
+
+                if (res.ok) {
+                    showSuccess();
+                } else {
+                    const data = await res.json();
+                    showError(data.detail || 'Something went wrong');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit';
+                }
+            } catch (e) {
+                showError('Connection error. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 4000);
+        }
+
+        function showSuccess() {
+            document.getElementById('formContent').classList.add('hidden');
+            document.getElementById('headerSubtitle').style.display = 'none';
+            document.getElementById('successMessage').classList.add('show');
+
+            // Celebrate with confetti!
+            fireConfetti();
+        }
+
+        function resetForm() {
+            document.getElementById('memory').value = '';
+            document.getElementById('resolution').value = '';
+            document.getElementById('guestName').value = '';
+            document.getElementById('memoryCount').textContent = '0 / 500';
+            document.getElementById('resolutionCount').textContent = '0 / 500';
+            document.getElementById('memoryCount').className = 'char-count';
+            document.getElementById('resolutionCount').className = 'char-count';
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').textContent = 'Submit';
+
+            // Reset anonymous toggle to checked (anonymous by default)
+            document.getElementById('anonymousToggle').checked = true;
+            document.getElementById('nameInputWrapper').classList.remove('visible');
+
+            document.getElementById('successMessage').classList.remove('show');
+            document.getElementById('headerSubtitle').style.display = '';
+            document.getElementById('formContent').classList.remove('hidden');
+        }
+
+        // Enter key handling (but allow newlines in textareas)
+        document.getElementById('guestName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitForm();
+            }
+        });
+
+        // Load random background image
+        async function loadRandomBackground() {
+            try {
+                const res = await fetch('/api/backgrounds');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.images && data.images.length > 0) {
+                        const randomPic = data.images[Math.floor(Math.random() * data.images.length)];
+                        document.body.style.backgroundImage = `url('${randomPic}')`;
+                    }
+                }
+            } catch (e) {
+                console.log('Could not load background images');
+            }
+        }
+        loadRandomBackground();
+    </script>
+</body>
+</html>

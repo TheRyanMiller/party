@@ -1,0 +1,23 @@
+# NYE Party App Configuration
+# ============================
+# Edit this file to customize app behavior
+
+# Admin authentication
+admin:
+  password: "kaya"              # Password for admin panel access
+
+# Polling intervals (milliseconds)
+# Lower = more responsive but higher server load
+polling:
+  slideshow_state: 2000         # How often slideshow checks for remote commands
+  admin_state: 2000             # How often admin panel syncs with slideshow
+  admin_submissions: 5000       # How often admin panel refreshes submissions
+
+# Video API settings
+video:
+  api_timeout: 10000            # Timeout for video API requests (ms)
+
+# Slideshow defaults (can be overridden in slideshow.yaml)
+slideshow:
+  default_duration: 30000       # Default slide duration (ms)
+  transition_duration: 1200     # Fade transition duration (ms)
