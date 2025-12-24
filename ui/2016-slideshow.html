@@ -976,6 +976,29 @@
         // HTML5 LOCAL VIDEO PLAYER
         // ============================================
 
+        // Attempt recovery for a slide by requesting the next video and reloading
+        async function recoverVideoForSlide(slideId, reason = 'error') {
+            if (!config || !config.slides) return;
+            const slideConfig = config.slides.find(s => s.id === slideId);
+            const videoConfig = slideConfig?.video !== false ? (slideConfig?.video || {}) : null;
+
+            if (!videoConfig) {
+                console.warn(`[Video] Recovery skipped for ${slideId} (no video config)`);
+                return;
+            }
+
+            console.warn(`[Video] Recovering "${slideId}" due to ${reason}`);
+            try {
+                // Bump play count so server rotates to next least-played file
+                await reportVideoPlayed(slideId);
+            } catch (err) {
+                console.warn(`[Video] Recovery play report failed for ${slideId}: ${err.message}`);
+            }
+
+            await loadVideoForSlide(slideId, videoConfig);
+            handleVideoOnSlideChange(slideId);
+        }
+
         // Create an HTML5 video player for local files with optional start/end timestamps
         function createLocalVideoPlayer(slideId, videoConfig, containerId) {
             const localPath = videoConfig.localVideo;
@@ -1006,6 +1029,8 @@
             video._endAt = endAt;
             video._slideId = slideId;
             video._resizeConfig = resize;
+            video._recoveryTimer = null;
+            video._recovering = false;
 
             // Add source - ensure absolute path from root
             const source = document.createElement('source');
@@ -1096,76 +1121,56 @@
                 video.play().catch(err => console.warn(`[Video] Loop play failed: ${err.message}`));
             });
 
-            // Track recovery attempts to prevent infinite stall loops
-            let recoveryAttempts = 0;
-            const MAX_RECOVERY_ATTEMPTS = 2;
-
             // Debug: Track video state changes
             video.addEventListener('playing', () => {
                 console.log(`[Video] Playing: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
-                recoveryAttempts = 0;  // Reset on successful play
+                if (video._recoveryTimer) {
+                    clearTimeout(video._recoveryTimer);
+                    video._recoveryTimer = null;
+                }
+                video._recovering = false;
             });
             video.addEventListener('pause', () => {
                 console.log(`[Video] Paused: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
             });
             video.addEventListener('stalled', () => {
-                console.warn(`[Video] Stalled: "${slideId}" at ${video.currentTime.toFixed(1)}s (attempt ${recoveryAttempts}/${MAX_RECOVERY_ATTEMPTS})`);
-                // Only try recovery if slide is active and we haven't tried too many times
-                const slideEl = document.querySelector(`[data-id="${slideId}"]`);
-                if (slideEl?.classList.contains('active') && recoveryAttempts < MAX_RECOVERY_ATTEMPTS) {
-                    recoveryAttempts++;
-                    setTimeout(() => {
-                        console.log(`[Video] Recovery attempt ${recoveryAttempts}/${MAX_RECOVERY_ATTEMPTS} for "${slideId}"`);
-                        // Just try to play - don't reload which causes infinite loop
-                        video.play().catch(() => {});
-                    }, 2000);
+                console.warn(`[Video] Stalled: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
+                if (!video._recoveryTimer) {
+                    video._recoveryTimer = setTimeout(() => {
+                        recoverVideoForSlide(slideId, 'stalled');
+                    }, 4000);
                 }
             });
             video.addEventListener('waiting', () => {
-                console.log(`[Video] Buffering: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
+                console.warn(`[Video] Waiting/buffering: "${slideId}" at ${video.currentTime.toFixed(1)}s`);
+                if (!video._recoveryTimer) {
+                    video._recoveryTimer = setTimeout(() => {
+                        recoverVideoForSlide(slideId, 'waiting');
+                    }, 4000);
+                }
             });
 
             // Track failed video paths per slide to avoid retry loops
             if (!window._failedVideos) window._failedVideos = {};
             if (!window._failedVideos[slideId]) window._failedVideos[slideId] = new Set();
 
-            // Handle errors gracefully - try to load alternate video
+            // Handle errors gracefully - recover to next video
             video.addEventListener('error', async (e) => {
                 const failedPath = video.querySelector('source')?.src;
                 console.warn(`[Video] Local video failed for "${slideId}": ${failedPath || 'unknown'}`);
 
-                // Track this failed video
                 if (failedPath) {
                     window._failedVideos[slideId].add(failedPath);
                 }
 
-                // Report as played so server returns a different video next time
-                await reportVideoPlayed(slideId);
-
-                // Try to get another video if slide is still active
-                const slideEl = document.querySelector(`[data-id="${slideId}"]`);
-                if (slideEl?.classList.contains('active') && window._failedVideos[slideId].size < 3) {
-                    console.log(`[Video] Attempting fallback video for "${slideId}" (attempt ${window._failedVideos[slideId].size})`);
-
-                    // Remove failed video
-                    video.remove();
-                    delete localVideos[slideId];
-
-                    // Try to load another video
-                    const slideConfig = config.slides.find(s => s.id === slideId);
-                    const videoConfig = slideConfig?.video || {};
-                    await loadVideoForSlide(slideId, videoConfig);
-
-                    // Play the new video if loaded
-                    if (localVideos[slideId]) {
-                        playLocalVideo(slideId);
-                    }
-                } else {
-                    // Give up - remove video and show slide without it
-                    console.warn(`[Video] No more fallbacks for "${slideId}", showing slide without video`);
-                    video.remove();
-                    delete localVideos[slideId];
+                if (video._recovering) return;
+                video._recovering = true;
+                if (video._recoveryTimer) {
+                    clearTimeout(video._recoveryTimer);
+                    video._recoveryTimer = null;
                 }
+
+                await recoverVideoForSlide(slideId, 'error');
             });
 
             // Clear container and add video
@@ -1309,13 +1314,18 @@
                 return renderGuestSlide(slide);
             }
 
-            // Merge with defaults
+            // Merge with defaults; allow explicit layout to take precedence
             const mergedSlide = {
                 ...config.defaults,
+                layout: 'simple',
                 ...slide
             };
 
-            // All default slides use the unified simple layout
+            const layout = mergedSlide.layout || 'simple';
+            if (layout !== 'simple') {
+                console.warn(`[Render] Unknown layout "${layout}", falling back to simple`);
+            }
+
             return renderSimpleSlide(mergedSlide);
         }
 

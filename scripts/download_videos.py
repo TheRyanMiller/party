@@ -21,6 +21,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -216,6 +217,41 @@ def get_video_duration(url: str) -> float | None:
     return None
 
 
+def get_video_duration_ffprobe(path: Path) -> float | None:
+    """Get duration of a local video file in seconds using ffprobe."""
+    try:
+        result = subprocess.run(
+            [
+                "ffprobe", "-v", "error",
+                "-show_entries", "format=duration",
+                "-of", "csv=p=0",
+                str(path),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return float(result.stdout.strip())
+    except Exception:
+        pass
+    return None
+
+
+def parse_ffmpeg_progress(line: str) -> float | None:
+    """
+    Parse out_time_us from ffmpeg -progress output.
+    Returns time in seconds, or None if not a time line.
+    """
+    if line.startswith("out_time_us="):
+        try:
+            microseconds = int(line.split("=")[1])
+            return microseconds / 1_000_000
+        except (ValueError, IndexError):
+            pass
+    return None
+
+
 def validate_time_range(
     start: int | None,
     end: int | None,
@@ -294,6 +330,184 @@ def extract_video_id(url: str) -> str:
     return url
 
 
+def run_command(cmd, cwd=None, check=False, capture_output=False, text=True):
+    """Run a shell command."""
+    return subprocess.run(cmd, cwd=cwd, check=check, capture_output=capture_output, text=text)
+
+
+def detect_codec(path: Path) -> str | None:
+    """Return the video codec name using ffprobe, or None on failure."""
+    try:
+        result = subprocess.check_output(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "v:0",
+                "-show_entries",
+                "stream=codec_name",
+                "-of",
+                "csv=p=0",
+                str(path),
+            ],
+            stderr=subprocess.DEVNULL,
+        )
+        return result.decode().strip()
+    except Exception:
+        return None
+
+
+def transcode_to_h264(src: Path, use_hardware: bool = True) -> Path | None:
+    """
+    Transcode to H.264 MP4 with progress display.
+    Tries VideoToolbox (hardware) first on macOS, falls back to libx264 (software).
+    Returns path to transcoded file, or None on failure.
+    """
+    tmp_out = src.with_suffix(".compat.mp4")
+
+    # Get duration for progress calculation
+    duration = get_video_duration_ffprobe(src)
+
+    # Select encoder
+    if use_hardware:
+        encoder_args = ["-c:v", "h264_videotoolbox", "-q:v", "65"]
+        encoder_name = "VideoToolbox (HW)"
+    else:
+        encoder_args = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20"]
+        encoder_name = "libx264 (SW)"
+
+    cmd = [
+        "ffmpeg", "-y", "-i", str(src),
+        *encoder_args,
+        "-c:a", "copy",
+        "-progress", "pipe:1",  # Structured progress to stdout
+        "-nostats",              # Suppress stderr stats
+        "-loglevel", "error",    # Only show errors on stderr
+        str(tmp_out),
+    ]
+
+    # Show encoder being used
+    if Colors.enabled():
+        print(f"     {Colors.CYAN}↻ {encoder_name}{Colors.RESET}", end="", flush=True)
+    else:
+        print(f"     ↻ {encoder_name}", end="", flush=True)
+
+    if duration:
+        print(f" ({int(duration)}s video)")
+    else:
+        print()
+
+    try:
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+        )
+
+        last_time = 0
+        start_wall = time.time()
+
+        # Parse progress from stdout
+        for line in iter(process.stdout.readline, ''):
+            line = line.strip()
+            current_time = parse_ffmpeg_progress(line)
+
+            if current_time is not None and duration and current_time > last_time:
+                last_time = current_time
+                percent = min(99.9, (current_time / duration) * 100)
+
+                # Calculate speed
+                elapsed = time.time() - start_wall
+                speed = current_time / elapsed if elapsed > 0 else 0
+                speed_str = f"{speed:.1f}x" if speed > 0 else ""
+
+                # Display progress bar
+                bar = format_progress_bar(percent)
+                if Colors.enabled():
+                    sys.stdout.write(f"\r     {bar} {Colors.BOLD}{percent:5.1f}%{Colors.RESET} {Colors.DIM}│{Colors.RESET} {Colors.CYAN}{speed_str}{Colors.RESET}")
+                else:
+                    sys.stdout.write(f"\r     {bar} {percent:5.1f}% │ {speed_str}")
+                sys.stdout.flush()
+
+        # Wait for completion
+        _, stderr = process.communicate()
+
+        # Clear progress line
+        if duration:
+            clear_progress_line()
+
+        if process.returncode == 0 and tmp_out.exists():
+            elapsed = time.time() - start_wall
+            if Colors.enabled():
+                print(f"     {Colors.GREEN}✓ Transcoded{Colors.RESET} in {elapsed:.1f}s")
+            else:
+                print(f"     ✓ Transcoded in {elapsed:.1f}s")
+            return tmp_out
+        else:
+            # Hardware failed - try software fallback
+            if use_hardware:
+                if tmp_out.exists():
+                    tmp_out.unlink(missing_ok=True)
+                if Colors.enabled():
+                    print(f"     {Colors.YELLOW}⚠ Hardware encoder failed, falling back to software...{Colors.RESET}")
+                else:
+                    print(f"     ⚠ Hardware encoder failed, falling back to software...")
+                return transcode_to_h264(src, use_hardware=False)
+            else:
+                error_msg = stderr.strip()[:100] if stderr else "Unknown error"
+                if Colors.enabled():
+                    print(f"     {Colors.RED}✗ Transcode failed:{Colors.RESET} {error_msg}")
+                else:
+                    print(f"     ✗ Transcode failed: {error_msg}")
+                if tmp_out.exists():
+                    tmp_out.unlink(missing_ok=True)
+                return None
+
+    except FileNotFoundError:
+        if Colors.enabled():
+            print(f"     {Colors.RED}✗ ffmpeg not found{Colors.RESET}")
+        else:
+            print(f"     ✗ ffmpeg not found")
+        return None
+    except Exception as e:
+        if use_hardware:
+            if tmp_out.exists():
+                tmp_out.unlink(missing_ok=True)
+            return transcode_to_h264(src, use_hardware=False)
+        if Colors.enabled():
+            print(f"     {Colors.RED}✗ Transcode failed:{Colors.RESET} {e}")
+        else:
+            print(f"     ✗ Transcode failed: {e}")
+        if tmp_out.exists():
+            tmp_out.unlink(missing_ok=True)
+        return None
+
+
+def ensure_compatible_codec(path: Path) -> Path:
+    """
+    Ensure the file is VP9/H.264 (avoid AV1). If AV1, transcode to H.264 MP4 in place.
+    Uses hardware encoding (VideoToolbox) when available, falls back to software.
+    Returns the final path (may be the same).
+    """
+    codec = detect_codec(path)
+    if codec is None:
+        print(f"     ⚠  Could not detect codec for {path.name}, leaving as-is")
+        return path
+    if codec.lower() == "av1":
+        print(f"     ↻ AV1 detected, transcoding to H.264: {path.name}")
+        out = transcode_to_h264(path)
+        if out and out.exists():
+            path.unlink(missing_ok=True)
+            out.rename(path)
+        return path
+    else:
+        print(f"     ✓ Codec OK ({codec}) for {path.name}")
+    return path
+
+
 def build_filename(
     video: dict,
     defaults: dict,
@@ -301,20 +515,18 @@ def build_filename(
     end_override: int | None = None,
 ) -> tuple[str, str, str]:
     """
-    Build filename that includes YouTube video ID and time range.
+    Build filename using YouTube video ID and time range only.
     Returns (filename_without_ext, video_id, time_suffix).
 
-    Format: {custom_name}_{video_id}_{start}-{end}.mp4
+    Format: {video_id}_{start}-{end}.mp4
     Examples:
-        - url: v7MGUNV8MxU, start: 0, end: 60       -> v7MGUNV8MxU_0-60
-        - url: uxpDa-c-4Mc, filename: drake, start: 10, end: 70 -> drake_uxpDa-c-4Mc_10-70
-        - url: abc123 (no times)                     -> abc123_full
+        - url: v7MGUNV8MxU, start: 0, end: 60  -> v7MGUNV8MxU_0-60
+        - url: abc123 (no times)               -> abc123_full
 
     If start_override/end_override are provided, they are used instead of video config.
     """
     url = video.get("url", "")
     video_id = extract_video_id(url)
-    custom_name = video.get("filename")
 
     # Use overrides if provided, otherwise use video config
     start = start_override if start_override is not None else video.get("start")
@@ -328,11 +540,7 @@ def build_filename(
     else:
         time_suffix = "full"
 
-    # Build filename with video ID and time range
-    if custom_name:
-        filename = f"{custom_name}_{video_id}_{time_suffix}"
-    else:
-        filename = f"{video_id}_{time_suffix}"
+    filename = f"{video_id}_{time_suffix}"
 
     return filename, video_id, time_suffix
 
@@ -442,9 +650,16 @@ def download_video(
     quality = defaults.get("quality", 720)
     output_path = output_dir / slide_id / f"{filename}.%(ext)s"
 
+    format_str = (
+        f"(bestvideo[vcodec^=avc1][ext=mp4][height<={quality}]/"
+        f"bestvideo[vcodec^=vp9][height<={quality}]/"
+        f"bestvideo[vcodec!*=av01][height<={quality}])"
+        f"+(bestaudio[ext=m4a]/bestaudio/best)"
+    )
+
     cmd = [
         "yt-dlp",
-        "-f", f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]",
+        "-f", format_str,
         "--merge-output-format", "mp4",
         "-o", str(output_path),
         "--no-playlist",
@@ -461,17 +676,19 @@ def download_video(
 
     # Print video info
     if Colors.enabled():
-        print(f"  {Colors.CYAN}📥 {filename}{Colors.RESET}")
+        print(f"  {Colors.CYAN}📥 {slide_id}/{filename}{Colors.RESET}")
         print(f"     {Colors.DIM}Video ID:{Colors.RESET} {video_id}")
         if adjusted_start is not None:
             end_display = adjusted_end if adjusted_end else adjusted_start + default_duration
             print(f"     {Colors.DIM}Time:{Colors.RESET}     {adjusted_start}s - {end_display}s")
+        print(f"     {Colors.DIM}Format:{Colors.RESET}  prefer avc1/vp9 → mp4 (avoid av01)")
     else:
-        print(f"  📥 {filename}")
+        print(f"  📥 {slide_id}/{filename}")
         print(f"     Video ID: {video_id}")
         if adjusted_start is not None:
             end_display = adjusted_end if adjusted_end else adjusted_start + default_duration
             print(f"     Time:     {adjusted_start}s - {end_display}s")
+        print(f"     Format:  prefer avc1/vp9 → mp4 (avoid av01)")
 
     # Print any time adjustment warnings
     for warning in time_warnings:
@@ -557,6 +774,10 @@ def download_video(
             # Find the downloaded file
             downloaded = find_existing_video(output_dir, slide_id, filename)
             downloaded_name = downloaded.name if downloaded else f"{filename}.mp4"
+            if downloaded:
+                ensure_compatible_codec(downloaded)
+            else:
+                ensure_compatible_codec(output_dir / slide_id / downloaded_name)
 
             # Show success with size info
             size_info = last_progress['size'] if last_progress else ''
@@ -625,6 +846,27 @@ def reset_all_status(plan: dict) -> int:
     return count
 
 
+def fix_existing_videos(output_dir: Path) -> int:
+    """
+    Scan videos/ for AV1 files and transcode them to H.264 MP4.
+    Uses hardware encoding (VideoToolbox) when available.
+    Returns count of files transcoded.
+    """
+    fixed = 0
+    for mp4 in output_dir.rglob("*.mp4"):
+        codec = detect_codec(mp4)
+        if codec and codec.lower() == "av1":
+            print(f"↻ Converting AV1 -> H.264: {mp4}")
+            out = transcode_to_h264(mp4)
+            if out and out.exists():
+                mp4.unlink(missing_ok=True)
+                out.rename(mp4)
+                fixed += 1
+        elif codec:
+            print(f"✓ OK ({codec}): {mp4}")
+    return fixed
+
+
 def get_status_summary(plan: dict) -> dict:
     """Get counts of each status type."""
     summary = {STATUS_PENDING: 0, STATUS_COMPLETED: 0, STATUS_ERROR: 0}
@@ -661,6 +903,11 @@ Examples (from project root):
     parser.add_argument("--reset", action="store_true", help="Clear all status fields and start fresh")
     parser.add_argument("--plan", default=None, help="Path to download plan (default: youtube_download_plan.yaml in project root)")
     parser.add_argument("--output", default=None, help="Output directory (default: videos/ in project root)")
+    parser.add_argument(
+        "--fix-existing",
+        action="store_true",
+        help="Scan existing videos and transcode AV1 to VP9 for compatibility",
+    )
     args = parser.parse_args()
 
     plan_file = Path(args.plan) if args.plan else PROJECT_ROOT / "youtube_download_plan.yaml"
@@ -681,6 +928,11 @@ Examples (from project root):
         print(f"🔄 Reset status for {reset_count} videos")
         print(f"   Plan saved: {plan_file}")
         return
+
+    if args.fix_existing:
+        print("🔍 Scanning existing videos for AV1 (will transcode to VP9)...")
+        fixed = fix_existing_videos(output_dir)
+        print(f"   Fixed {fixed} file(s)")
 
     # Show current status summary
     summary = get_status_summary(plan)

@@ -16,6 +16,7 @@ Usage (from project root):
 import json
 import logging
 import time
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
@@ -247,6 +248,11 @@ def scan_videos() -> dict[str, list[str]]:
                 and not video_file.name.startswith("_")):
                 # Check file is not empty/corrupt
                 if video_file.stat().st_size > 1000:  # At least 1KB
+                    codec = detect_video_codec(video_file)
+                    if codec == "av1":
+                        logger.warning(f"AV1 video detected (may fail in some browsers): {video_file}")
+                    elif codec:
+                        logger.info(f"Detected codec {codec} for {video_file.name}")
                     # Store path relative to PROJECT_ROOT for use as URL
                     relative_path = video_file.relative_to(PROJECT_ROOT)
                     videos.append(str(relative_path))
@@ -1043,3 +1049,24 @@ async def static_files(filename: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+# Helper to detect codec (best-effort; warns on AV1 which can be flaky)
+def detect_video_codec(path: Path) -> Optional[str]:
+    try:
+        result = subprocess.check_output(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "v:0",
+                "-show_entries",
+                "stream=codec_name",
+                "-of",
+                "csv=p=0",
+                str(path),
+            ],
+            stderr=subprocess.DEVNULL,
+        )
+        return result.decode().strip()
+    except Exception:
+        return None
